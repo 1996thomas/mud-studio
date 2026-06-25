@@ -8,9 +8,58 @@ const ibmPlexSans = IBM_Plex_Sans({
   weight: ["100", "200", "300", "400", "500", "600", "700"],
 });
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mud-studio.fr'
+
 export const metadata: Metadata = {
-  title: "Mud Studio",
-  description: "Mud Studio",
+  metadataBase: new URL(BASE_URL),
+
+  title: {
+    default: 'MUD Studio',
+    template: '%s | MUD Studio',
+  },
+  description: 'Lieu de création artistique à Montreuil : expositions, ateliers, résidences, événements et collaborations culturelles.',
+  keywords: [
+    'MUD Studio', 'Montreuil', 'lieu culturel', 'atelier artiste',
+    'espace créatif', 'résidence artistique', 'exposition',
+    'workshop', 'tiers lieu', 'art contemporain',
+  ],
+
+  authors: [{ name: 'MUD Studio', url: BASE_URL }],
+  creator: 'MUD Studio',
+  publisher: 'MUD Studio',
+
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: BASE_URL,
+    siteName: 'MUD Studio',
+    title: 'MUD Studio',
+    description: 'Lieu de création artistique à Montreuil : expositions, ateliers, résidences, événements et collaborations culturelles.',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'MUD Studio — espace de création à Montreuil' }],
+  },
+
+  twitter: {
+    card: 'summary_large_image',
+    site: '@mudstudio',
+    title: 'MUD Studio',
+    description: 'Lieu de création artistique à Montreuil : expositions, ateliers, résidences, événements et collaborations culturelles.',
+    images: ['/opengraph-image'],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+  },
+
+  icons: {
+    icon: [
+      { url: '/icon.png', type: 'image/png', sizes: '512x512' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
