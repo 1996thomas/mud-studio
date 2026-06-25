@@ -3,95 +3,114 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import Image from 'next/image'
+import { config } from '@/app/config'
 
-const GAP = 16
+// ─── Helpers ────────────────────────────────────────────────────
 
-function getGrid() {
-  const vw = window.innerWidth
-  const vh = window.innerHeight
-  const cols = vw < 640 ? 2 : vw < 1024 ? 3 : 7
-  const rows = Math.ceil((vh * cols) / vw) + 2
+const G = config.grid
+
+function computeGrid() {
+  const { innerWidth: vw, innerHeight: vh } = window
+  const cols = vw < 640 ? G.cols.mobile : vw < 1024 ? G.cols.tablet : G.cols.desktop
+  const rows = Math.ceil((vh * cols) / vw) + 2  // +2 rows ensures full coverage after rotation
   return { cols, rows }
 }
 
-interface GridMotionProps {
-  gradientColor?: string
-}
+// ─── Component ──────────────────────────────────────────────────
 
-export default function GridMotion({ gradientColor = '#1C1C1C' }: GridMotionProps) {
+export default function GridMotion() {
   const rowRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [grid, setGrid] = useState({ cols: 7, rows: 5 })
+  // Start null so the server and client initial render agree (avoids SSR cell mismatch)
+  const [grid, setGrid] = useState<{ cols: number; rows: number } | null>(null)
 
+  // ── Measure viewport, recompute on resize
   useEffect(() => {
-    const update = () => setGrid(getGrid())
+    const update = () => setGrid(computeGrid())
     update()
     window.addEventListener('resize', update)
     return () => window.removeEventListener('resize', update)
   }, [])
 
+  // ── Kick off infinite scroll once grid dimensions are known
   useEffect(() => {
+    if (!grid) return
     gsap.ticker.lagSmoothing(0)
 
-    // One copy = 150vw wide + the gap between the two copies at the seam
-    const oneSetWidth = window.innerWidth * 1.5 + GAP
+    // Each row scrolls one "copy" width then loops — 150vw + 1 gap = exact seam
+    const loopWidth = window.innerWidth * 1.5 + G.gap
 
     rowRefs.current.forEach((row, i) => {
       if (!row) return
       gsap.killTweensOf(row)
 
-      const goLeft = i % 2 === 0
-      // Slightly different speed per row for depth feel
-      const duration = 28 + i * 2
+      const goLeft   = i % 2 === 0
+      const duration = G.rowSpeed + i * 2   // stagger speed per row for depth feel
 
       gsap.fromTo(
         row,
-        { x: goLeft ? 0 : -oneSetWidth },
-        { x: goLeft ? -oneSetWidth : 0, duration, repeat: -1, ease: 'none' }
+        { x: goLeft ? 0 : -loopWidth },
+        { x: goLeft ? -loopWidth : 0, duration, repeat: -1, ease: 'none' }
       )
     })
 
-    return () => {
-      rowRefs.current.forEach(row => {
-        if (row) gsap.killTweensOf(row)
-      })
-    }
+    const rows = rowRefs.current.slice()
+    return () => { rows.forEach(row => row && gsap.killTweensOf(row)) }
   }, [grid])
 
+  // ── Render ──────────────────────────────────────────────────
+
+  const background = `radial-gradient(circle, ${G.gradientColor} 0%, ${config.page.background} 100%)`
+
+  // While waiting for client measurement, show only the background gradient
+  if (!grid) {
+    return <div className="absolute inset-0" style={{ background }} />
+  }
+
   const { cols, rows } = grid
-  // Each cell: (150vw - gaps between cols) / cols
-  const cellWidth = `calc((150vw - ${GAP * (cols - 1)}px) / ${cols})`
+  // Cell width = (150vw minus all gaps) ÷ number of columns
+  const cellWidth = `calc((150vw - ${G.gap * (cols - 1)}px) / ${cols})`
 
   return (
     <div className="absolute inset-0 overflow-hidden">
       <section
-        className="w-full h-full overflow-hidden relative flex items-center justify-center"
-        style={{ background: `radial-gradient(circle, ${gradientColor} 0%, #0a0a0a 100%)` }}
+        className="w-full h-full overflow-hidden flex items-center justify-center"
+        style={{ background }}
       >
+        {/* Rotated grid — 150vw wide so it covers the screen even when tilted */}
         <div
-          className="flex-none flex flex-col origin-center rotate-[-15deg] z-2"
-          style={{ width: '150vw', gap: GAP }}
+          className="flex-none flex flex-col"
+          style={{
+            width: '150vw',
+            gap: G.gap,
+            transform: `rotate(${G.rotation}deg)`,
+            transformOrigin: 'center',
+          }}
         >
           {Array.from({ length: rows }, (_, rowIndex) => (
             <div
               key={rowIndex}
               className="flex flex-none"
-              style={{ gap: GAP, willChange: 'transform' }}
+              style={{ gap: G.gap, willChange: 'transform' }}
               ref={el => { rowRefs.current[rowIndex] = el }}
             >
-              {/* Two copies of the cells for a seamless infinite loop */}
+              {/* Double columns for seamless infinite loop */}
               {Array.from({ length: cols * 2 }, (_, i) => (
                 <div
                   key={i}
-                  className="relative flex-none overflow-hidden rounded-xl bg-[#1a1a1a]"
-                  style={{ width: cellWidth, aspectRatio: '1' }}
+                  className="relative flex-none overflow-hidden rounded-xl"
+                  style={{ width: cellWidth, aspectRatio: '1', background: G.cellBackground }}
                 >
                   <Image
                     src="/mud_logo_officiel.svg"
                     alt=""
                     fill
                     loading="eager"
-                    className="object-contain p-5"
-                    style={{ filter: 'brightness(0) invert(1)', opacity: 0.55 }}
+                    className="object-contain"
+                    style={{
+                      filter: 'brightness(0) invert(1)',
+                      opacity: G.logoOpacity,
+                      padding: G.logoPadding,
+                    }}
                   />
                 </div>
               ))}

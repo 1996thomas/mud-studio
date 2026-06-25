@@ -11,7 +11,7 @@ export function NewsletterForm() {
   return (
     <form
       action={formAction}
-      className="w-full max-w-sm flex flex-col gap-5 p-8 shadow-2xl"
+      className="w-full max-w-sm flex flex-col gap-5 p-8 shadow-2xl rounded-xl"
       style={{
         background: 'rgba(255, 255, 255, 0.08)',
         backdropFilter: 'blur(20px)',
@@ -20,8 +20,8 @@ export function NewsletterForm() {
       }}
     >
       <div className="flex flex-col gap-1 text-center">
-        <h2 className="text-white text-2xl font-light tracking-widest uppercase">
-          Newsletter
+        <h2 className="text-white text-2xl font-black uppercase">
+          Mud Studio
         </h2>
         <p className="text-white/50 text-sm tracking-wide">
           Restez informés de nos actualités
@@ -34,7 +34,7 @@ export function NewsletterForm() {
         placeholder="votre@email.com"
         required
         disabled={state?.success}
-        className="w-full px-4 py-3 text-white placeholder:text-white/30 text-sm focus:outline-none transition"
+        className="w-full px-4 py-3 text-white rounded-md placeholder:text-white/30 text-sm focus:outline-none transition"
         style={{
           background: 'rgba(255, 255, 255, 0.07)',
           border: '1px solid rgba(255, 255, 255, 0.12)',
@@ -44,7 +44,7 @@ export function NewsletterForm() {
       <button
         type="submit"
         disabled={pending || state?.success}
-        className="w-full py-3  text-white/90 text-sm font-medium tracking-wider uppercase transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90"
+        className="w-full py-3  text-white/90 text-sm rounded-md font-medium tracking-wider uppercase transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90"
         style={{
           background: 'rgba(255, 255, 255, 0.15)',
           border: '1px solid rgba(255, 255, 255, 0.2)',

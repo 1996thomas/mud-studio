@@ -1,24 +1,34 @@
 import GridMotion from '@/app/components/GridMotion'
 import Grainient from '@/app/components/Grainient'
 import { NewsletterForm } from '@/app/components/NewsletterForm'
+import { config } from '@/app/config'
+
+const { grain, page } = config
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen flex items-center p-4 justify-center bg-[#0a0a0a] overflow-hidden ">
+    <div
+      className="relative min-h-screen flex items-center p-4 justify-center overflow-hidden"
+      style={{ background: page.background }}
+    >
       {/* Layer 1 — scrolling logo grid */}
-      <GridMotion gradientColor="#1C1C1C" />
+      <GridMotion />
 
       {/* Layer 2 — grainy animated overlay */}
       <Grainient
-        blendAngle={-9}
-        grainAmount={0.35}
-        grainAnimated
-        saturation={0.7}
-        contrast={1.3}
-        opacity={0.45}
-        color1="#FF9FFC"
-        color2="#5227FF"
-        color3="#0a0a0a"
+        blendAngle={grain.blendAngle}
+        blendSoftness={grain.blendSoftness}
+        grainAmount={grain.grainAmount}
+        grainAnimated={grain.grainAnimated}
+        saturation={grain.saturation}
+        contrast={grain.contrast}
+        opacity={grain.opacity}
+        timeSpeed={grain.timeSpeed}
+        warpStrength={grain.warpStrength}
+        warpSpeed={grain.warpSpeed}
+        color1={grain.color1}
+        color2={grain.color2}
+        color3={grain.color3}
       />
 
       {/* Layer 3 — glass newsletter form */}
