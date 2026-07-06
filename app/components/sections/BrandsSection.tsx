@@ -14,7 +14,7 @@ const BRANDS = [
     role: 'Marque résidente',
     accent: 'var(--color-bizness)',
     bgUrl: '/mb.webp',
-    bg: '#1a2a24',
+    logoUrl: '/biznesslogowhite.svg', // → remplacer par '/logos/mb_logo.svg'
     description:
       "Marque de streetwear qui fabrique ses pièces directement dans l'atelier Mud Studio, en sérigraphie et DTF.",
   },
@@ -24,7 +24,7 @@ const BRANDS = [
     role: 'Marque résidente',
     accent: 'var(--color-marginal)',
     bgUrl: '/margi.png',
-    bg: '#1f1008',
+    logoUrl: '/margi.svg', // → remplacer par '/logos/marginal_logo.svg'
     description:
       "Collections streetwear en séries limitées, conçues et imprimées dans l'atelier depuis l'ouverture.",
   },
@@ -33,8 +33,8 @@ const BRANDS = [
     name: ['Bourbier'],
     role: 'Marque partenaire',
     accent: 'var(--color-mud)',
-    bg: '#181210',
     bgUrl: '/bourbier.png',
+    logoUrl: '/bourbier_logo.svg', // → remplacer par '/logos/bourbier_logo.svg'
     description:
       "Production en cours de structuration avec l'atelier Mud Studio — description complète à paraître.",
   },
@@ -162,26 +162,60 @@ export default function BrandsSection() {
             </div>
 
             {/* OVERLAY */}
-            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute inset-0 bg-black/45" />
 
-            {/* CONTENT */}
-            <div className="relative z-10 flex h-full flex-col justify-between p-10 text-white">
+            {/* CENTER: brand logo (ou placeholder) */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {brand.logoUrl ? (
+                <div className="relative h-28 w-56 sm:h-36 sm:w-72">
+                  <Image
+                    src={brand.logoUrl}
+                    alt={brand.name.join(' ')}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              ) : (
+                /* Placeholder : nom stylisé en filigranne */
+                <p
+                  className="select-none text-center font-black uppercase"
+                  style={{
+                    fontSize: 'clamp(1.6rem,5vw,3.2rem)',
+                    letterSpacing: '0.12em',
+                    lineHeight: 1,
+                    color: 'white',
+                    opacity: 0.18,
+                  }}
+                >
+                  {brand.name.map((l, j) => (
+                    <span key={j} className="block">{l}</span>
+                  ))}
+                </p>
+              )}
+            </div>
 
-              <div className="flex justify-between text-xs uppercase opacity-70">
-                <span>{brand.number}</span>
-                <span>{brand.role}</span>
+            {/* BOTTOM: numéro + nom + description */}
+            <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-45">
+              {/* numéro + role */}
+              <div className="mb-4 flex items-center gap-2">
+                <span
+                  className="h-2 w-2 flex-none rounded-full"
+                  style={{ background: brand.accent }}
+                />
+                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
+                  {brand.number} · {brand.role}
+                </span>
               </div>
 
-              <h3 className="text-[clamp(3rem,9vw,8rem)] font-black uppercase leading-[0.9]">
-                {brand.name.map((l) => (
-                  <span key={l} className="block">{l}</span>
-                ))}
+              {/* Nom de la marque — titre de la description */}
+              <h3 className="text-lg font-black uppercase leading-snug tracking-wide text-white sm:text-xl">
+                {brand.name.join(' ')}
               </h3>
 
-              <p className="max-w-[55ch] text-sm opacity-70">
+              {/* Description */}
+              <p className="mt-2 max-w-[50ch] text-sm leading-relaxed text-white/60">
                 {brand.description}
               </p>
-
             </div>
           </article>
         ))}

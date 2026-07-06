@@ -88,7 +88,7 @@ export default function TeamSection() {
         style={{ background: '#0e0e0e' }}
       >
         {/* Section heading */}
-        <div className="flex items-baseline justify-between pt-16 pb-6">
+        <div className="flex items-baseline justify-between pt-16 pb-6 p-4">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-500">
               Mud Studio

@@ -166,7 +166,21 @@ export default function Grainient({
     const container = containerRef.current
     if (!container) return
 
-    const renderer = new Renderer({ webgl: 2, alpha: true, antialias: false, dpr: Math.min(devicePixelRatio, 2) })
+    // Skip WebGL on touch devices — shader is too heavy for mobile GPUs
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return
+
+    // Lower DPR on smaller screens to halve GPU fill-rate
+    const dpr = window.innerWidth < 1024
+      ? Math.min(devicePixelRatio, 1)
+      : Math.min(devicePixelRatio, 2)
+
+    let renderer: InstanceType<typeof Renderer>
+    try {
+      renderer = new Renderer({ webgl: 2, alpha: true, antialias: false, dpr })
+    } catch {
+      try { renderer = new Renderer({ alpha: true, antialias: false, dpr }) }
+      catch { return } // no WebGL support — skip gracefully
+    }
     const gl       = renderer.gl
     const canvas   = gl.canvas as HTMLCanvasElement
     canvas.style.cssText = 'width:100%;height:100%;display:block'
@@ -282,7 +296,7 @@ export default function Grainient({
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-0 pointer-events-none"
+      className="absolute inset-0 z-0 pointer-events-none"
       style={{ opacity }}
     />
   )

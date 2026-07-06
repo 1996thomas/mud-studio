@@ -5,7 +5,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative flex min-h-screen flex-col"
+      className="relative flex min-h-screen flex-col p-4"
       style={{ background: 'var(--color-paper)' }}
     >
       {/* ── Top bar: logo + location ────────────────── */}
@@ -37,7 +37,7 @@ export default function HeroSection() {
         </p>
 
         <h1
-          className="mt-6 text-[clamp(3.5rem,9vw,8rem)] font-light leading-[1.0]"
+          className="mt-6 text-[clamp(3rem,9vw,8rem)] font-black leading-[1.0] uppercase"
           style={{ color: 'var(--color-ink)' }}
         >
           {hero.headlineLines.map((line, i) => (

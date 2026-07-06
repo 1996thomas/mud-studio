@@ -104,7 +104,7 @@ export default function GridMotion() {
                     src="/mud_logo_officiel.svg"
                     alt=""
                     fill
-                    loading="eager"
+                    loading="lazy"
                     className="object-contain"
                     style={{
                       filter: 'brightness(0) invert(1)',
