@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
-import { IBM_Plex_Sans } from "next/font/google";
-import "./globals.css";
-import LenisProvider from "@/app/components/LenisProvider";
+import type { Metadata } from 'next'
+import { IBM_Plex_Sans } from 'next/font/google'
+import './globals.css'
+import LenisProvider from '@/app/components/LenisProvider'
 
 const ibmPlexSans = IBM_Plex_Sans({
-  variable: "--font-ibm-plex-sans",
-  subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700"],
-});
+  variable: '--font-ibm-plex-sans',
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700'],
+  display: 'swap',
+})
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mud-studio.fr'
+const BASE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mud-studio.fr'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -18,11 +20,19 @@ export const metadata: Metadata = {
     default: 'MUD Studio',
     template: '%s | MUD Studio',
   },
-  description: 'Lieu de création artistique à Montreuil : expositions, ateliers, résidences, événements et collaborations culturelles.',
+  description:
+    'Lieu de création artistique à Montreuil : expositions, ateliers, résidences, événements et collaborations culturelles.',
   keywords: [
-    'MUD Studio', 'Montreuil', 'lieu culturel', 'atelier artiste',
-    'espace créatif', 'résidence artistique', 'exposition',
-    'workshop', 'tiers lieu', 'art contemporain',
+    'MUD Studio',
+    'Montreuil',
+    'lieu culturel',
+    'atelier artiste',
+    'espace créatif',
+    'résidence artistique',
+    'exposition',
+    'workshop',
+    'tiers lieu',
+    'art contemporain',
   ],
 
   authors: [{ name: 'MUD Studio', url: BASE_URL }],
@@ -35,22 +45,35 @@ export const metadata: Metadata = {
     url: BASE_URL,
     siteName: 'MUD Studio',
     title: 'MUD Studio',
-    description: 'Lieu de création artistique à Montreuil : expositions, ateliers, résidences, événements et collaborations culturelles.',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'MUD Studio — espace de création à Montreuil' }],
+    description:
+      'Lieu de création artistique à Montreuil : expositions, ateliers, résidences, événements et collaborations culturelles.',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'MUD Studio — espace de création à Montreuil',
+      },
+    ],
   },
 
   twitter: {
     card: 'summary_large_image',
     site: '@mudstudio',
     title: 'MUD Studio',
-    description: 'Lieu de création artistique à Montreuil : expositions, ateliers, résidences, événements et collaborations culturelles.',
+    description:
+      'Lieu de création artistique à Montreuil : expositions, ateliers, résidences, événements et collaborations culturelles.',
     images: ['/opengraph-image'],
   },
 
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+    },
   },
 
   icons: {
@@ -58,24 +81,26 @@ export const metadata: Metadata = {
       { url: '/icon.png', type: 'image/png', sizes: '512x512' },
       { url: '/favicon.ico', sizes: 'any' },
     ],
-    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
     shortcut: '/favicon.ico',
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html
       lang="fr"
       className={`${ibmPlexSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-ibm-plex-sans), Helvetica, Arial, sans-serif" }}>
+      <body className="min-h-full flex flex-col font-sans">
         <LenisProvider>{children}</LenisProvider>
       </body>
     </html>
-  );
+  )
 }

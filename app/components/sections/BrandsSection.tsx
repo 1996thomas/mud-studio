@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -40,17 +41,13 @@ const BRANDS = [
 ]
 
 export default function BrandsSection() {
-  // outerRef: explicit height — creates the scroll budget for the pin
   const outerRef = useRef<HTMLDivElement>(null)
-  // cardRefs: the 3 brand cards that slide in from below
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
-
 
   useEffect(() => {
     const outer = outerRef.current
     if (!outer) return
 
-    // One full viewport per card animation, plus one viewport for the initial view
     const setHeight = () => {
       outer.style.height = `${window.innerHeight * (BRANDS.length + 1)}px`
     }
@@ -61,7 +58,6 @@ export default function BrandsSection() {
         const card = cardRefs.current[i]
         if (!card) return
 
-        // Card i slides from y:100% → y:0% during scroll interval [i×vh, (i+1)×vh]
         gsap.fromTo(
           card,
           { y: '100%' },
@@ -70,12 +66,10 @@ export default function BrandsSection() {
             ease: 'none',
             scrollTrigger: {
               trigger: outer,
-              // start/end as functions so they recalculate on resize
               start: () => `top+=${i * window.innerHeight}px top`,
               end: () => `top+=${(i + 1) * window.innerHeight}px top`,
               scrub: 1,
               invalidateOnRefresh: true,
-              // only first card's ST needs to refresh outer height
               onRefresh: i === 0 ? setHeight : undefined,
             },
           }
@@ -87,13 +81,9 @@ export default function BrandsSection() {
   }, [])
 
   return (
-    // Outer: its explicit height creates the vertical scroll budget
     <div ref={outerRef} style={{ background: 'var(--color-paper)' }}>
-
-      {/* Sticky viewport: stays at top while outer scrolls */}
       <div className="sticky top-0 h-screen overflow-hidden">
-
-        {/* ── Base layer: "Les partenaires à l'année" ─── */}
+        {/* Base layer */}
         <div
           className="absolute inset-0 flex flex-col justify-between py-10 sm:py-16"
           style={{ background: 'var(--color-paper)', color: 'var(--color-ink)' }}
@@ -117,7 +107,7 @@ export default function BrandsSection() {
             className="text-[clamp(3rem,8vw,7rem)] font-black leading-none uppercase text-center"
             style={{ color: 'var(--color-ink)' }}
           >
-           Les marques résidentes
+            Les marques résidentes
           </h2>
 
           <div
@@ -139,27 +129,40 @@ export default function BrandsSection() {
           </div>
         </div>
 
-        {/* ── Brand cards: stack from below ─────────── */}
         {BRANDS.map((brand, i) => (
           <div
             key={i}
-            ref={(el) => { cardRefs.current[i] = el }}
-            className="absolute inset-0 will-change-transform"
+            ref={(el) => {
+              cardRefs.current[i] = el
+            }}
+            className="absolute inset-0 will-change-transform overflow-hidden"
             style={{
               zIndex: i + 2,
               background: brand.bg,
-              backgroundImage: `url(${brand.bgUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              // Initial state (before GSAP takes over): card is below viewport
               transform: 'translateY(100%)',
             }}
           >
+            {/* Image de fond optimisée */}
+            <div className="absolute inset-0">
+              <Image
+                src={brand.bgUrl}
+                alt={`${brand.name.join(' ')} background`}
+                fill
+                priority={i === 0}
+                quality={85}
+                sizes="100vw"
+                className="object-cover object-center"
+              />
+            </div>
+
+            {/* overlay pour lisibilité */}
+            <div className="absolute inset-0 bg-black/35" />
+
+            {/* contenu */}
             <div
-              className="flex h-full flex-col justify-between py-10  sm:py-16"
+              className="relative z-10 flex h-full flex-col justify-between py-10 sm:py-16"
               style={{ color: 'var(--color-paper)' }}
             >
-              {/* Top row */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span
@@ -181,17 +184,17 @@ export default function BrandsSection() {
                 </span>
               </div>
 
-              {/* Brand name — large */}
               <h3
                 className="text-[clamp(3rem,9vw,8rem)] font-black uppercase leading-[0.88]"
                 style={{ color: 'var(--color-paper)' }}
               >
                 {brand.name.map((line, j) => (
-                  <span key={j} className="block">{line}</span>
+                  <span key={j} className="block">
+                    {line}
+                  </span>
                 ))}
               </h3>
 
-              {/* Description */}
               <div
                 className="border-t pt-5"
                 style={{ borderColor: 'rgba(234,230,221,0.1)' }}
@@ -206,7 +209,6 @@ export default function BrandsSection() {
             </div>
           </div>
         ))}
-
       </div>
     </div>
   )
