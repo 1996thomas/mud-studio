@@ -23,7 +23,8 @@ const BRANDS = [
     name: ['Marginal', 'Mouvement'],
     role: 'Marque résidente',
     accent: 'var(--color-marginal)',
-    bgUrl: '/margi.png',
+    bgPosition: 'top',
+    bgUrl: '/margi.webp',
     logoUrl: '/margi.svg', // → remplacer par '/logos/marginal_logo.svg'
     description:
       "Collections streetwear en séries limitées, conçues et imprimées dans l'atelier depuis l'ouverture.",
@@ -66,13 +67,13 @@ export default function BrandsSection() {
       gsap.set(cards, { visibility: 'visible' })
 
       BRANDS.forEach((_, i) => {
-        const card  = cardRefs.current[i]
+        const card = cardRefs.current[i]
         const image = imageRefs.current[i]
         if (!card) return
 
-        const getStart    = () => window.innerHeight * INTRO + i * window.innerHeight * CARD_SCREENS
+        const getStart = () => window.innerHeight * INTRO + i * window.innerHeight * CARD_SCREENS
         const getEnterEnd = () => getStart() + window.innerHeight * 0.9
-        const getHoldEnd  = () => getStart() + window.innerHeight * CARD_SCREENS
+        const getHoldEnd = () => getStart() + window.innerHeight * CARD_SCREENS
 
         // force3D ensures translateZ(0) is used — GPU compositor layer
         gsap.fromTo(
@@ -85,7 +86,7 @@ export default function BrandsSection() {
             scrollTrigger: {
               trigger: outer,
               start: () => `top+=${getStart()}px top`,
-              end:   () => `top+=${getEnterEnd()}px top`,
+              end: () => `top+=${getEnterEnd()}px top`,
               scrub: 1,
               invalidateOnRefresh: true,
             },
@@ -104,7 +105,7 @@ export default function BrandsSection() {
               scrollTrigger: {
                 trigger: outer,
                 start: () => `top+=${getStart()}px top`,
-                end:   () => `top+=${getHoldEnd()}px top`,
+                end: () => `top+=${getHoldEnd()}px top`,
                 scrub: true,
                 invalidateOnRefresh: true,
               },
@@ -159,6 +160,7 @@ export default function BrandsSection() {
                 src={brand.bgUrl}
                 alt={brand.name.join(' ')}
                 fill
+                style={{ objectPosition: brand.bgPosition }}
                 priority={i === 0}
                 quality={75}
                 sizes="100vw"

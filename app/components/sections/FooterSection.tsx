@@ -1,4 +1,3 @@
-import GridMotion from '@/app/components/GridMotion'
 import { NewsletterFields } from '@/app/components/newsletter/NewsletterFields'
 import { siteData } from '@/app/data'
 import { config } from '@/app/config'
@@ -13,8 +12,6 @@ export default function FooterSection() {
       className="relative min-h-screen overflow-hidden"
       style={{ background: config.page.background }}
     >
-      {/* ── Animated background layers ─────────────── */}
-      <GridMotion />
     
       {/* ── Content — sits above the animated bg ───── */}
       <div

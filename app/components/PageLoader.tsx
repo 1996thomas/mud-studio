@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 
 // Minimum time the loader stays visible (ms) — gives animations room to breathe
-const MIN_DURATION = 5000
+const MIN_DURATION = 3000
 // Hard fallback so the loader never blocks forever
 const MAX_DURATION = 10000
 

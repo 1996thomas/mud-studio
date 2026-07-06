@@ -34,6 +34,7 @@ export const siteData = {
   hero: {
     eyebrow: 'Montreuil · 93',
     headlineLines: ['Un espace', "d'exposition,", 'un atelier textile'],
+    logoUrl: '/mud_logo_officiel.svg',
     subheading:
       "Mud Studio accueille expositions, pop-up stores et séances photo dans un espace de 20 m², et fabrique en petites séries pour des marques indépendantes dans son atelier de sérigraphie, DTF et flex.",
     ctaPrimary: { label: "Découvrir l'espace", href: '/espace' },

@@ -1,4 +1,5 @@
 import { siteData } from '@/app/data'
+import Image from 'next/image'
 
 export default function HeroSection() {
   const { hero, brand } = siteData
@@ -46,7 +47,6 @@ export default function HeroSection() {
             </span>
           ))}
         </h1>
-
         <div
           className="mt-12 grid gap-10 border-t pt-10 sm:grid-cols-2"
           style={{ borderColor: 'var(--color-line)' }}
