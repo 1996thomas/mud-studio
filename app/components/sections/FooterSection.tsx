@@ -14,7 +14,7 @@ export default function FooterSection() {
       style={{ background: config.page.background }}
     >
       {/* ── Animated background layers ─────────────── */}
-      <GridMotion />
+      {/* <GridMotion /> */}
     
       {/* ── Content — sits above the animated bg ───── */}
       <div
