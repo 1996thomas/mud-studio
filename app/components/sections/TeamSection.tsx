@@ -94,7 +94,7 @@ export default function TeamSection() {
               Mud Studio
             </p>
             <h2 className="mt-3 text-[clamp(2.8rem,4.5vw,4rem)] font-light leading-none text-white">
-              La team fondatrice
+              Equipe fondatrice
             </h2>
           </div>
           <p className="font-mono text-[11px] text-neutral-500">03 membres</p>
