@@ -282,7 +282,7 @@ export default function Grainient({
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 z-5 pointer-events-none"
+      className="fixed inset-0 z-0 pointer-events-none"
       style={{ opacity }}
     />
   )

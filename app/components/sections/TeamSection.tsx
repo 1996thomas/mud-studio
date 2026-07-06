@@ -32,7 +32,7 @@ En charge de l'atelier et du suivi des commandes.`,
 
 // How many viewport-heights worth of extra scroll to spend on the carousel.
 // Higher = slower / more time on each card.
-const SCROLL_MULTIPLIER = 3
+const SCROLL_MULTIPLIER = 1
 
 export default function TeamSection() {
   // outerRef: explicit-height container — determines total scroll budget
@@ -88,7 +88,7 @@ export default function TeamSection() {
         style={{ background: '#0e0e0e' }}
       >
         {/* Section heading */}
-        <div className="flex items-baseline justify-between px-14 pt-16 pb-6">
+        <div className="flex items-baseline justify-between pt-16 pb-6">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-500">
               Mud Studio
@@ -103,7 +103,7 @@ export default function TeamSection() {
         {/* Horizontal track */}
         <div
           ref={trackRef}
-          className="flex gap-20 pb-14"
+          className="flex gap-30 pb-14"
           style={{ width: 'max-content' }}
         >
           {/* Leading spacer — first card enters centered */}

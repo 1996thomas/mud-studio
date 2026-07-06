@@ -10,7 +10,7 @@ export default function HeroSection() {
     >
       {/* ── Top bar: logo + location ────────────────── */}
       <div
-        className="flex items-center justify-between px-14 py-8"
+        className="flex items-center justify-between py-8"
         style={{ borderBottom: '1px solid var(--color-line)' }}
       >
         <span
@@ -28,7 +28,7 @@ export default function HeroSection() {
       </div>
 
       {/* ── Main headline ───────────────────────────── */}
-      <div className="flex flex-1 flex-col justify-end px-14 pb-16 pt-20">
+      <div className="flex flex-1 flex-col justify-end pb-16 pt-20">
         <p
           className="font-mono text-[11px] uppercase tracking-[0.22em]"
           style={{ color: 'var(--color-mud)' }}
@@ -85,7 +85,7 @@ export default function HeroSection() {
 
       {/* ── Bottom meta bar ─────────────────────────── */}
       <div
-        className="flex justify-between px-14 pb-8 font-mono text-[11px] uppercase tracking-widest"
+        className="flex justify-between pb-8 font-mono text-[11px] uppercase tracking-widest"
         style={{ color: 'var(--color-ink-soft)', borderTop: '1px solid var(--color-line)', paddingTop: '1.25rem' }}
       >
         <span>{hero.meta.left}</span>

@@ -12,6 +12,7 @@ const BRANDS = [
     name: ['Maison', 'Bizness'],
     role: 'Marque résidente',
     accent: 'var(--color-bizness)',
+    bgUrl: '/mb.webp',
     bg: '#1a2a24',
     description:
       "Marque de streetwear qui fabrique ses pièces directement dans l'atelier Mud Studio, en sérigraphie et DTF.",
@@ -21,6 +22,7 @@ const BRANDS = [
     name: ['Marginal', 'Mouvement'],
     role: 'Marque résidente',
     accent: 'var(--color-marginal)',
+    bgUrl: '/margi.png',
     bg: '#1f1008',
     description:
       "Collections streetwear en séries limitées, conçues et imprimées dans l'atelier depuis l'ouverture.",
@@ -31,6 +33,7 @@ const BRANDS = [
     role: 'Marque partenaire',
     accent: 'var(--color-mud)',
     bg: '#181210',
+    bgUrl: '/bourbier.png',
     description:
       "Production en cours de structuration avec l'atelier Mud Studio — description complète à paraître.",
   },
@@ -41,6 +44,7 @@ export default function BrandsSection() {
   const outerRef = useRef<HTMLDivElement>(null)
   // cardRefs: the 3 brand cards that slide in from below
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
+
 
   useEffect(() => {
     const outer = outerRef.current
@@ -68,7 +72,7 @@ export default function BrandsSection() {
               trigger: outer,
               // start/end as functions so they recalculate on resize
               start: () => `top+=${i * window.innerHeight}px top`,
-              end:   () => `top+=${(i + 1) * window.innerHeight}px top`,
+              end: () => `top+=${(i + 1) * window.innerHeight}px top`,
               scrub: 1,
               invalidateOnRefresh: true,
               // only first card's ST needs to refresh outer height
@@ -91,7 +95,7 @@ export default function BrandsSection() {
 
         {/* ── Base layer: "Les partenaires à l'année" ─── */}
         <div
-          className="absolute inset-0 flex flex-col justify-between px-6 py-10 sm:px-14 sm:py-16"
+          className="absolute inset-0 flex flex-col justify-between py-10 sm:py-16"
           style={{ background: 'var(--color-paper)', color: 'var(--color-ink)' }}
         >
           <div className="flex items-start justify-between">
@@ -110,12 +114,10 @@ export default function BrandsSection() {
           </div>
 
           <h2
-            className="text-[clamp(3rem,8vw,7rem)] font-light leading-none"
+            className="text-[clamp(3rem,8vw,7rem)] font-black leading-none uppercase text-center"
             style={{ color: 'var(--color-ink)' }}
           >
-            Les<br />
-            partenaires<br />
-            à l&apos;année
+           Les marques résidentes
           </h2>
 
           <div
@@ -144,14 +146,17 @@ export default function BrandsSection() {
             ref={(el) => { cardRefs.current[i] = el }}
             className="absolute inset-0 will-change-transform"
             style={{
-              zIndex:     i + 2,
+              zIndex: i + 2,
               background: brand.bg,
+              backgroundImage: `url(${brand.bgUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
               // Initial state (before GSAP takes over): card is below viewport
-              transform:  'translateY(100%)',
+              transform: 'translateY(100%)',
             }}
           >
             <div
-              className="flex h-full flex-col justify-between px-6 py-10 sm:px-14 sm:py-16"
+              className="flex h-full flex-col justify-between py-10  sm:py-16"
               style={{ color: 'var(--color-paper)' }}
             >
               {/* Top row */}

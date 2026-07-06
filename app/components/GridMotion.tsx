@@ -71,7 +71,7 @@ export default function GridMotion() {
   const cellWidth = `calc((150vw - ${G.gap * (cols - 1)}px) / ${cols})`
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden brightness-50">
       <section
         className="w-full h-full overflow-hidden flex items-center justify-center"
         style={{ background }}

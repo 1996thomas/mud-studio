@@ -1,10 +1,8 @@
 import GridMotion from '@/app/components/GridMotion'
-import Grainient from '@/app/components/Grainient'
 import { NewsletterFields } from '@/app/components/newsletter/NewsletterFields'
 import { siteData } from '@/app/data'
 import { config } from '@/app/config'
 
-const { grain } = config
 
 export default function FooterSection() {
   const { brand, footer, newsletter } = siteData
@@ -17,25 +15,10 @@ export default function FooterSection() {
     >
       {/* ── Animated background layers ─────────────── */}
       <GridMotion />
-      <Grainient
-        blendAngle={grain.blendAngle}
-        blendSoftness={grain.blendSoftness}
-        grainAmount={grain.grainAmount}
-        grainAnimated={grain.grainAnimated}
-        saturation={grain.saturation}
-        contrast={grain.contrast}
-        opacity={grain.opacity}
-        timeSpeed={grain.timeSpeed}
-        warpStrength={grain.warpStrength}
-        warpSpeed={grain.warpSpeed}
-        color1={grain.color1}
-        color2={grain.color2}
-        color3={grain.color3}
-      />
-
+    
       {/* ── Content — sits above the animated bg ───── */}
       <div
-        className="relative z-10 flex min-h-screen flex-col justify-between px-14 py-16"
+        className="relative z-10 flex min-h-screen flex-col justify-between py-16"
         style={{ color: 'var(--color-paper)' }}
       >
         <div>
