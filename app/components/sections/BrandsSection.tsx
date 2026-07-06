@@ -42,174 +42,157 @@ const BRANDS = [
 
 export default function BrandsSection() {
   const outerRef = useRef<HTMLDivElement>(null)
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([])
+  const cardRefs = useRef<(HTMLElement | null)[]>([])
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     const outer = outerRef.current
     if (!outer) return
 
+    const vh = () => window.innerHeight
+
+    const CARD_SCREENS = 1.9
+    const INTRO = 1
+
+    const getHeight = () =>
+      vh() * (INTRO + BRANDS.length * CARD_SCREENS)
+
     const setHeight = () => {
-      outer.style.height = `${window.innerHeight * (BRANDS.length + 1)}px`
+      outer.style.height = `${getHeight()}px`
     }
+
     setHeight()
 
     const ctx = gsap.context(() => {
-      BRANDS.forEach((_, i) => {
-        const card = cardRefs.current[i]
-        if (!card) return
+      const mm = gsap.matchMedia()
 
-        gsap.fromTo(
-          card,
-          { y: '100%' },
-          {
-            y: '0%',
+      mm.add('(min-width: 0px)', () => {
+        // RESET (IMPORTANT → évite les cards invisibles)
+        gsap.set(cardRefs.current, { yPercent: 100, force3D: true })
+        gsap.set(imageRefs.current, { scale: 1.1, force3D: true })
+
+        BRANDS.forEach((_, i) => {
+          const card = cardRefs.current[i]
+          const image = imageRefs.current[i]
+
+          if (!card) return
+
+          const start = vh() * INTRO + i * vh() * CARD_SCREENS
+          const enterEnd = start + vh() * 0.9
+          const holdEnd = start + vh() * CARD_SCREENS
+
+          // ── CARD REVEAL ─────────────────────────────
+          gsap.to(card, {
+            yPercent: 0,
             ease: 'none',
             scrollTrigger: {
               trigger: outer,
-              start: () => `top+=${i * window.innerHeight}px top`,
-              end: () => `top+=${(i + 1) * window.innerHeight}px top`,
+              start: () => `top+=${start}px top`,
+              end: () => `top+=${enterEnd}px top`,
               scrub: 1,
               invalidateOnRefresh: true,
-              onRefresh: i === 0 ? setHeight : undefined,
             },
+          })
+
+          // ── IMAGE ZOOM SMOOTH ───────────────────────
+          if (image) {
+            gsap.to(image, {
+              scale: 1,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: outer,
+                start: () => `top+=${start}px top`,
+                end: () => `top+=${holdEnd}px top`,
+                scrub: true,
+                invalidateOnRefresh: true,
+              },
+            })
           }
-        )
+        })
+
+        ScrollTrigger.refresh()
       })
-    })
+
+      const onResize = () => {
+        setHeight()
+        ScrollTrigger.refresh()
+      }
+
+      window.addEventListener('resize', onResize)
+
+      return () => {
+        window.removeEventListener('resize', onResize)
+      }
+    }, outer)
 
     return () => ctx.revert()
   }, [])
 
   return (
-    <div ref={outerRef} style={{ background: 'var(--color-paper)' }}>
+    <section ref={outerRef} className="relative bg-[var(--color-paper)]">
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Base layer */}
-        <div
-          className="absolute inset-0 flex flex-col justify-between py-10 sm:py-16"
-          style={{ background: 'var(--color-paper)', color: 'var(--color-ink)' }}
-        >
-          <div className="flex items-start justify-between">
-            <p
-              className="font-mono text-[11px] uppercase tracking-[0.22em]"
-              style={{ color: 'var(--color-ink-soft)' }}
-            >
-              Collaborations
-            </p>
-            <p
-              className="font-mono text-[11px]"
-              style={{ color: 'var(--color-ink-soft)' }}
-            >
-              Montreuil · 93
-            </p>
-          </div>
 
-          <h2
-            className="text-[clamp(3rem,8vw,7rem)] font-black leading-none uppercase text-center"
-            style={{ color: 'var(--color-ink)' }}
-          >
+        {/* BASE LAYER */}
+        <div className="absolute inset-0 flex flex-col justify-between py-10">
+          <h2 className="text-center text-[clamp(3rem,8vw,7rem)] font-black uppercase">
             Les marques résidentes
           </h2>
-
-          <div
-            className="flex items-center justify-between border-t pt-5"
-            style={{ borderColor: 'var(--color-line)' }}
-          >
-            <p
-              className="font-mono text-[11px] uppercase tracking-[0.18em]"
-              style={{ color: 'var(--color-ink-soft)' }}
-            >
-              03 marques partenaires
-            </p>
-            <p
-              className="font-mono text-[11px]"
-              style={{ color: 'var(--color-ink-soft)' }}
-            >
-              Scroll ↓
-            </p>
-          </div>
         </div>
 
+        {/* CARDS */}
         {BRANDS.map((brand, i) => (
-          <div
-            key={i}
+          <article
+            key={brand.number}
             ref={(el) => {
               cardRefs.current[i] = el
             }}
-            className="absolute inset-0 will-change-transform overflow-hidden"
-            style={{
-              zIndex: i + 2,
-              background: brand.bg,
-              transform: 'translateY(100%)',
-            }}
+            className="absolute inset-0 overflow-hidden will-change-transform"
+            style={{ zIndex: i + 2 }}
           >
-            {/* Image de fond optimisée */}
-            <div className="absolute inset-0">
+
+            {/* IMAGE */}
+            <div
+              ref={(el) => {
+                imageRefs.current[i] = el
+              }}
+              className="absolute inset-0"
+            >
               <Image
                 src={brand.bgUrl}
-                alt={`${brand.name.join(' ')} background`}
+                alt={brand.name.join(' ')}
                 fill
                 priority={i === 0}
-                quality={85}
+                quality={75}
                 sizes="100vw"
                 className="object-cover object-center"
               />
             </div>
 
-            {/* overlay pour lisibilité */}
-            <div className="absolute inset-0 bg-black/35" />
+            {/* OVERLAY */}
+            <div className="absolute inset-0 bg-black/40" />
 
-            {/* contenu */}
-            <div
-              className="relative z-10 flex h-full flex-col justify-between py-10 sm:py-16"
-              style={{ color: 'var(--color-paper)' }}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span
-                    className="h-2.5 w-2.5 flex-none rounded-full"
-                    style={{ background: brand.accent }}
-                  />
-                  <span
-                    className="font-mono text-[11px] uppercase tracking-[0.22em]"
-                    style={{ color: 'rgba(234,230,221,0.45)' }}
-                  >
-                    {brand.number}
-                  </span>
-                </div>
-                <span
-                  className="font-mono text-[11px] uppercase tracking-[0.15em]"
-                  style={{ color: 'rgba(234,230,221,0.35)' }}
-                >
-                  {brand.role}
-                </span>
+            {/* CONTENT */}
+            <div className="relative z-10 flex h-full flex-col justify-between p-10 text-white">
+
+              <div className="flex justify-between text-xs uppercase opacity-70">
+                <span>{brand.number}</span>
+                <span>{brand.role}</span>
               </div>
 
-              <h3
-                className="text-[clamp(3rem,9vw,8rem)] font-black uppercase leading-[0.88]"
-                style={{ color: 'var(--color-paper)' }}
-              >
-                {brand.name.map((line, j) => (
-                  <span key={j} className="block">
-                    {line}
-                  </span>
+              <h3 className="text-[clamp(3rem,9vw,8rem)] font-black uppercase leading-[0.9]">
+                {brand.name.map((l) => (
+                  <span key={l} className="block">{l}</span>
                 ))}
               </h3>
 
-              <div
-                className="border-t pt-5"
-                style={{ borderColor: 'rgba(234,230,221,0.1)' }}
-              >
-                <p
-                  className="max-w-[52ch] text-sm leading-relaxed sm:text-base"
-                  style={{ color: 'rgba(234,230,221,0.55)' }}
-                >
-                  {brand.description}
-                </p>
-              </div>
+              <p className="max-w-[55ch] text-sm opacity-70">
+                {brand.description}
+              </p>
+
             </div>
-          </div>
+          </article>
         ))}
       </div>
-    </div>
+    </section>
   )
 }
