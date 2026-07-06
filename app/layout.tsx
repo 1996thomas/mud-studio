@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { IBM_Plex_Sans } from 'next/font/google'
 import './globals.css'
 import LenisProvider from '@/app/components/LenisProvider'
+import PageLoader from '@/app/components/PageLoader'
 
 const ibmPlexSans = IBM_Plex_Sans({
   variable: '--font-ibm-plex-sans',
@@ -99,6 +100,7 @@ export default function RootLayout({
       className={`${ibmPlexSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
+        <PageLoader />
         <LenisProvider>{children}</LenisProvider>
       </body>
     </html>

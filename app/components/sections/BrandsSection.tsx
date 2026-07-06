@@ -49,80 +49,73 @@ export default function BrandsSection() {
     const outer = outerRef.current
     if (!outer) return
 
-    const vh = () => window.innerHeight
-
     const CARD_SCREENS = 1.9
     const INTRO = 1
 
-    const getHeight = () =>
-      vh() * (INTRO + BRANDS.length * CARD_SCREENS)
-
     const setHeight = () => {
-      outer.style.height = `${getHeight()}px`
+      outer.style.height = `${window.innerHeight * (INTRO + BRANDS.length * CARD_SCREENS)}px`
     }
-
     setHeight()
 
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia()
+      // Reveal cards (visibility was hidden in JSX to prevent SSR flash)
+      // yPercent is managed exclusively by GSAP via fromTo — no inline transform conflict
+      const cards = cardRefs.current.filter(Boolean) as HTMLElement[]
+      gsap.set(cards, { visibility: 'visible' })
 
-      mm.add('(min-width: 0px)', () => {
-        // RESET (IMPORTANT → évite les cards invisibles)
-        gsap.set(cardRefs.current, { yPercent: 100, force3D: true })
-        gsap.set(imageRefs.current, { scale: 1.1, force3D: true })
+      BRANDS.forEach((_, i) => {
+        const card  = cardRefs.current[i]
+        const image = imageRefs.current[i]
+        if (!card) return
 
-        BRANDS.forEach((_, i) => {
-          const card = cardRefs.current[i]
-          const image = imageRefs.current[i]
+        const getStart    = () => window.innerHeight * INTRO + i * window.innerHeight * CARD_SCREENS
+        const getEnterEnd = () => getStart() + window.innerHeight * 0.9
+        const getHoldEnd  = () => getStart() + window.innerHeight * CARD_SCREENS
 
-          if (!card) return
-
-          const start = vh() * INTRO + i * vh() * CARD_SCREENS
-          const enterEnd = start + vh() * 0.9
-          const holdEnd = start + vh() * CARD_SCREENS
-
-          // ── CARD REVEAL ─────────────────────────────
-          gsap.to(card, {
+        // fromTo: GSAP is the single source of truth for yPercent, no conflict with inline styles
+        gsap.fromTo(
+          card,
+          { yPercent: 100 },
+          {
             yPercent: 0,
             ease: 'none',
             scrollTrigger: {
               trigger: outer,
-              start: () => `top+=${start}px top`,
-              end: () => `top+=${enterEnd}px top`,
+              start: () => `top+=${getStart()}px top`,
+              end:   () => `top+=${getEnterEnd()}px top`,
               scrub: 1,
               invalidateOnRefresh: true,
             },
-          })
+          }
+        )
 
-          // ── IMAGE ZOOM SMOOTH ───────────────────────
-          if (image) {
-            gsap.to(image, {
+        if (image) {
+          gsap.fromTo(
+            image,
+            { scale: 1.1 },
+            {
               scale: 1,
               ease: 'none',
               scrollTrigger: {
                 trigger: outer,
-                start: () => `top+=${start}px top`,
-                end: () => `top+=${holdEnd}px top`,
+                start: () => `top+=${getStart()}px top`,
+                end:   () => `top+=${getHoldEnd()}px top`,
                 scrub: true,
                 invalidateOnRefresh: true,
               },
-            })
-          }
-        })
-
-        ScrollTrigger.refresh()
+            }
+          )
+        }
       })
 
       const onResize = () => {
         setHeight()
         ScrollTrigger.refresh()
       }
-
       window.addEventListener('resize', onResize)
+      requestAnimationFrame(() => ScrollTrigger.refresh())
 
-      return () => {
-        window.removeEventListener('resize', onResize)
-      }
+      return () => window.removeEventListener('resize', onResize)
     }, outer)
 
     return () => ctx.revert()
@@ -133,8 +126,8 @@ export default function BrandsSection() {
       <div className="sticky top-0 h-screen overflow-hidden">
 
         {/* BASE LAYER */}
-        <div className="absolute inset-0 flex flex-col justify-between py-10">
-          <h2 className="text-center text-[clamp(3rem,8vw,7rem)] font-black uppercase">
+        <div className="absolute inset-0 flex flex-col justify-between py-10 flex justify-center items-center">
+          <h2 className="text-center text-[clamp(3rem,8vw,7rem)] font-black text-black/80 uppercase">
             Les marques résidentes
           </h2>
         </div>
@@ -146,8 +139,8 @@ export default function BrandsSection() {
             ref={(el) => {
               cardRefs.current[i] = el
             }}
-            className="absolute inset-0 overflow-hidden will-change-transform"
-            style={{ zIndex: i + 2 }}
+            className="absolute inset-0 overflow-hidden"
+            style={{ zIndex: i + 2, visibility: 'hidden' }}
           >
 
             {/* IMAGE */}
