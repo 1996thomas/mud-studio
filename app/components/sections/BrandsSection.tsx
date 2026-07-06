@@ -58,9 +58,10 @@ export default function BrandsSection() {
     }
     setHeight()
 
+    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches
+
     const ctx = gsap.context(() => {
       // Reveal cards (visibility was hidden in JSX to prevent SSR flash)
-      // yPercent is managed exclusively by GSAP via fromTo — no inline transform conflict
       const cards = cardRefs.current.filter(Boolean) as HTMLElement[]
       gsap.set(cards, { visibility: 'visible' })
 
@@ -73,13 +74,14 @@ export default function BrandsSection() {
         const getEnterEnd = () => getStart() + window.innerHeight * 0.9
         const getHoldEnd  = () => getStart() + window.innerHeight * CARD_SCREENS
 
-        // fromTo: GSAP is the single source of truth for yPercent, no conflict with inline styles
+        // force3D ensures translateZ(0) is used — GPU compositor layer
         gsap.fromTo(
           card,
           { yPercent: 100 },
           {
             yPercent: 0,
             ease: 'none',
+            force3D: true,
             scrollTrigger: {
               trigger: outer,
               start: () => `top+=${getStart()}px top`,
@@ -90,13 +92,15 @@ export default function BrandsSection() {
           }
         )
 
-        if (image) {
+        // Image scale: skip on mobile — one fewer GPU transform per card
+        if (!isTouch && image) {
           gsap.fromTo(
             image,
             { scale: 1.1 },
             {
               scale: 1,
               ease: 'none',
+              force3D: true,
               scrollTrigger: {
                 trigger: outer,
                 start: () => `top+=${getStart()}px top`,
@@ -141,7 +145,7 @@ export default function BrandsSection() {
               cardRefs.current[i] = el
             }}
             className="absolute inset-0 overflow-hidden"
-            style={{ zIndex: i + 2, visibility: 'hidden' }}
+            style={{ zIndex: i + 2, visibility: 'hidden', willChange: 'transform' }}
           >
 
             {/* IMAGE */}

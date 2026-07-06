@@ -30,39 +30,32 @@ En charge de l'atelier et du suivi des commandes.`,
   },
 ]
 
-// How many viewport-heights worth of extra scroll to spend on the carousel.
-// Higher = slower / more time on each card.
 const SCROLL_MULTIPLIER = 1
 
 export default function TeamSection() {
-  // outerRef: explicit-height container — determines total scroll budget
   const outerRef  = useRef<HTMLDivElement>(null)
-  // stickyRef: CSS sticky element — stays at viewport top during scroll
   const stickyRef = useRef<HTMLDivElement>(null)
-  // trackRef: the horizontal row of cards
   const trackRef  = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const outer  = outerRef.current
-    const track  = trackRef.current
+    const outer = outerRef.current
+    const track = trackRef.current
     if (!outer || !track) return
 
-    // Sets outer height so the sticky section has enough scroll room.
-    // outer.height = 100vh + (SCROLL_MULTIPLIER × horizontal travel)
+    // Mobile: CSS snap handles the carousel natively — no JS in the scroll hot path
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return
+
     const setOuterHeight = () => {
       const travelX = track.scrollWidth - window.innerWidth
       outer.style.height = `${window.innerHeight + travelX * SCROLL_MULTIPLIER}px`
     }
-
     setOuterHeight()
 
-    // GSAP maps scroll progress of the outer container to the track's X position.
-    // start: outer top hits viewport top  → x = 0        (first card centered)
-    // end:   outer bottom hits viewport bottom → x = -travelX (last card centered)
     const ctx = gsap.context(() => {
       gsap.to(track, {
         x: () => -(track.scrollWidth - window.innerWidth),
         ease: 'none',
+        force3D: true,
         scrollTrigger: {
           trigger: outer,
           start: 'top top',
@@ -78,16 +71,17 @@ export default function TeamSection() {
   }, [])
 
   return (
-    // Outer: its height creates the vertical scroll budget consumed by the carousel
     <div ref={outerRef} style={{ background: '#0e0e0e' }}>
-
-      {/* Sticky inner: glued at the top while outer scrolls beneath it */}
+      {/*
+        Desktop: sticky h-screen, GSAP drives the track's translateX
+        Mobile:  static, height auto — CSS snap takes over
+      */}
       <div
         ref={stickyRef}
-        className="sticky top-0 h-screen overflow-hidden"
+        className="md:sticky md:top-0 md:h-screen md:overflow-hidden"
         style={{ background: '#0e0e0e' }}
       >
-        {/* Section heading */}
+        {/* Heading */}
         <div className="flex items-baseline justify-between pt-16 pb-6 p-4">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-500">
@@ -100,71 +94,80 @@ export default function TeamSection() {
           <p className="font-mono text-[11px] text-neutral-500">03 membres</p>
         </div>
 
-        {/* Horizontal track */}
+        {/*
+          Mobile scroll container: overflow-x-auto + snap (native, composited)
+          Desktop: overflow-visible so GSAP can move the track freely
+        */}
         <div
-          ref={trackRef}
-          className="flex gap-30 pb-14"
-          style={{ width: 'max-content' }}
+          className="snap-scroll-container overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none"
+          style={{ scrollbarWidth: 'none' }}
         >
-          {/* Leading spacer — first card enters centered */}
           <div
-            className="flex-none"
-            style={{ width: 'calc((100vw - (100vh - 220px) * 0.75) / 2)' }}
-          />
-
-          {MEMBERS.map((member, i) => (
+            ref={trackRef}
+            className="flex gap-5 px-4 pb-8 md:gap-30 md:px-0 md:pb-14"
+            style={{ width: 'max-content', willChange: 'transform' }}
+          >
+            {/* Leading spacer — desktop only */}
             <div
-              key={i}
-              className="relative flex-none overflow-hidden rounded-2xl"
-              style={{
-                height: 'calc(100vh - 220px)',
-                width:  'calc((100vh - 220px) * 0.75)',
-              }}
-            >
-              {/* Photo placeholder — swap for <Image fill className="object-cover"> */}
-              <div className="absolute inset-0 bg-neutral-800">
-                <div className="flex h-full w-full items-center justify-center">
-                  <span
-                    className="select-none font-mono font-black leading-none"
-                    style={{
-                      fontSize: 'clamp(5rem,15vw,12rem)',
-                      color: 'rgba(255,255,255,0.05)',
-                    }}
-                  >
-                    {member.number}
-                  </span>
+              className="hidden md:block flex-none"
+              style={{ width: 'calc((100vw - (100vh - 220px) * 0.75) / 2)' }}
+            />
+
+            {MEMBERS.map((member, i) => (
+              <div
+                key={i}
+                className="
+                  relative flex-none overflow-hidden rounded-2xl
+                  snap-center
+                  w-[80vw] h-[107vw]
+                  md:w-[calc((100vh-220px)*0.75)] md:h-[calc(100vh-220px)]
+                "
+              >
+                {/* Photo placeholder */}
+                <div className="absolute inset-0 bg-neutral-800">
+                  <div className="flex h-full w-full items-center justify-center">
+                    <span
+                      className="select-none font-mono font-black leading-none"
+                      style={{
+                        fontSize: 'clamp(5rem,15vw,12rem)',
+                        color: 'rgba(255,255,255,0.05)',
+                      }}
+                    >
+                      {member.number}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Bottom gradient + text */}
+                <div
+                  className="absolute inset-x-0 bottom-0"
+                  style={{
+                    height: '65%',
+                    background:
+                      'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 40%, transparent 100%)',
+                  }}
+                />
+                <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+                  <p className="font-mono text-[11px] text-white/40">{member.number}</p>
+                  <h3 className="mt-2 text-[clamp(1.1rem,2vw,1.8rem)] font-light leading-snug text-white">
+                    {member.name}
+                  </h3>
+                  <p className="mt-1 text-[11px] uppercase tracking-[0.15em] text-white/50">
+                    {member.role}
+                  </p>
+                  <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-white/40">
+                    {member.description}
+                  </p>
                 </div>
               </div>
+            ))}
 
-              {/* Bottom gradient + text overlay */}
-              <div
-                className="absolute inset-x-0 bottom-0"
-                style={{
-                  height: '65%',
-                  background:
-                    'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 40%, transparent 100%)',
-                }}
-              />
-              <div className="absolute inset-x-0 bottom-0 p-8">
-                <p className="font-mono text-[11px] text-white/40">{member.number}</p>
-                <h3 className="mt-2 text-[clamp(1.3rem,2vw,1.8rem)] font-light leading-snug text-white">
-                  {member.name}
-                </h3>
-                <p className="mt-1 text-[11px] uppercase tracking-[0.15em] text-white/50">
-                  {member.role}
-                </p>
-                <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-white/40">
-                  {member.description}
-                </p>
-              </div>
-            </div>
-          ))}
-
-          {/* Trailing spacer — last card ends centered */}
-          <div
-            className="flex-none"
-            style={{ width: 'calc((100vw - (100vh - 220px) * 0.75) / 2)' }}
-          />
+            {/* Trailing spacer — desktop only */}
+            <div
+              className="hidden md:block flex-none"
+              style={{ width: 'calc((100vw - (100vh - 220px) * 0.75) / 2)' }}
+            />
+          </div>
         </div>
       </div>
     </div>
