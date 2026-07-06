@@ -23,8 +23,11 @@ export default function GridMotion() {
   // Start null so the server and client initial render agree (avoids SSR cell mismatch)
   const [grid, setGrid] = useState<{ cols: number; rows: number } | null>(null)
 
-  // ── Measure viewport, recompute on resize
+  // ── Measure viewport, recompute on resize (skipped on touch = no animations)
   useEffect(() => {
+    // Infinite animated grid is too heavy on mobile GPUs — skip it entirely
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return
+
     const update = () => setGrid(computeGrid())
     update()
     window.addEventListener('resize', update)
@@ -34,7 +37,6 @@ export default function GridMotion() {
   // ── Kick off infinite scroll once grid dimensions are known
   useEffect(() => {
     if (!grid) return
-    gsap.ticker.lagSmoothing(0)
 
     // Each row scrolls one "copy" width then loops — 150vw + 1 gap = exact seam
     const loopWidth = window.innerWidth * 1.5 + G.gap

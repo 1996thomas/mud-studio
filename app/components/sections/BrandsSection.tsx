@@ -51,9 +51,10 @@ export default function BrandsSection() {
 
     const CARD_SCREENS = 1.9
     const INTRO = 1
+    const OUTRO = 1.2  // extra hold after last card settles — softens the transition to TeamSection
 
     const setHeight = () => {
-      outer.style.height = `${window.innerHeight * (INTRO + BRANDS.length * CARD_SCREENS)}px`
+      outer.style.height = `${window.innerHeight * (INTRO + BRANDS.length * CARD_SCREENS + OUTRO)}px`
     }
     setHeight()
 
