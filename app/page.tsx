@@ -1,40 +1,22 @@
-import GridMotion from '@/app/components/GridMotion'
-import Grainient from '@/app/components/Grainient'
-import { NewsletterForm } from '@/app/components/NewsletterForm'
-import { config } from '@/app/config'
-
-const { grain, page } = config
+import HeroSection from '@/app/components/sections/HeroSection'
+import BrandsSection from '@/app/components/sections/BrandsSection'
+import TeamSection from '@/app/components/sections/TeamSection'
+import FooterSection from '@/app/components/sections/FooterSection'
 
 export default function Home() {
   return (
-    <div
-      className="relative min-h-screen flex items-center p-4 justify-center overflow-hidden"
-      style={{ background: page.background }}
-    >
-      {/* Layer 1 — scrolling logo grid */}
-      <GridMotion />
+    <>
+      {/* 1 — Studio presentation */}
+      <HeroSection />
 
-      {/* Layer 2 — grainy animated overlay */}
-      <Grainient
-        blendAngle={grain.blendAngle}
-        blendSoftness={grain.blendSoftness}
-        grainAmount={grain.grainAmount}
-        grainAnimated={grain.grainAnimated}
-        saturation={grain.saturation}
-        contrast={grain.contrast}
-        opacity={grain.opacity}
-        timeSpeed={grain.timeSpeed}
-        warpStrength={grain.warpStrength}
-        warpSpeed={grain.warpSpeed}
-        color1={grain.color1}
-        color2={grain.color2}
-        color3={grain.color3}
-      />
+      {/* 2 — Annual brand partners (sticky) */}
+      <BrandsSection />
 
-      {/* Layer 3 — glass newsletter form */}
-      <div className="relative z-10 w-full max-w-sm">
-        <NewsletterForm />
-      </div>
-    </div>
+      {/* 3 — Founding team (horizontal scroll) */}
+      <TeamSection />
+
+      {/* 4 — Contact + newsletter (GridMotion + Grainient background) */}
+      <FooterSection />
+    </>
   )
 }

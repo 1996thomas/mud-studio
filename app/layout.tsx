@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
+import LenisProvider from "@/app/components/LenisProvider";
 
 const ibmPlexSans = IBM_Plex_Sans({
   variable: "--font-ibm-plex-sans",
@@ -72,7 +73,9 @@ export default function RootLayout({
       lang="fr"
       className={`${ibmPlexSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-ibm-plex-sans), Helvetica, Arial, sans-serif" }}>{children}</body>
+      <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-ibm-plex-sans), Helvetica, Arial, sans-serif" }}>
+        <LenisProvider>{children}</LenisProvider>
+      </body>
     </html>
   );
 }

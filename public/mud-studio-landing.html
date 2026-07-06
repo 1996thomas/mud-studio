@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mud Studio — Montreuil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@400;600;700;900&family=Big+Shoulders+Stencil:wght@700;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EAE6DD;
+    --paper-alt:#DFDACB;
+    --ink:#1C1917;
+    --ink-soft:#4A443D;
+    --mud:#7A4F35;
+    --marginal:#B23A1E;
+    --bizness:#2F4A3E;
+    --line: rgba(28,25,23,0.16);
+    --accent: var(--mud);
+    --max: 1120px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Big Shoulders', sans-serif;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    margin:0;
+    line-height:0.92;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px;height:1px;
+    background:var(--accent);
+    display:inline-block;
+  }
+  p{ margin:0 0 1em; color:var(--ink-soft); max-width:56ch; }
+  a{ color:inherit; }
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 28px; }
+  section{ position:relative; padding:108px 0; border-bottom:1px solid var(--line); }
+
+  /* registration mark motif */
+  .regmark{
+    position:absolute;
+    width:26px;height:26px;
+    opacity:0.35;
+    pointer-events:none;
+  }
+  .regmark svg{ width:100%; height:100%; }
+  .regmark.tl{ top:36px; left:28px; }
+  .regmark.br{ bottom:36px; right:28px; }
+
+  /* NAV */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    padding:20px 28px;
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase;
+    background:transparent;
+    transition:background .35s ease, border-color .35s ease, padding .35s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    background:rgba(234,230,221,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    padding:14px 28px;
+  }
+  header .logo{ font-family:'Big Shoulders Stencil', sans-serif; font-size:20px; letter-spacing:0.04em; font-weight:900; }
+  header nav{ display:flex; gap:26px; }
+  header nav a{ text-decoration:none; opacity:0.75; transition:opacity .2s; }
+  header nav a:hover, header nav a:focus-visible{ opacity:1; }
+  .menu-toggle{ display:none; }
+
+  /* HERO */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding-top:140px;
+    border-bottom:1px solid var(--line);
+    background:
+      radial-gradient(ellipse 900px 500px at 85% 8%, rgba(122,79,53,0.14), transparent 60%),
+      var(--paper);
+  }
+  .hero .wrap{ width:100%; }
+  .hero .eyebrow{ color:var(--mud); }
+  .hero h1{
+    font-size:clamp(46px, 8.4vw, 108px);
+    max-width:16ch;
+    overflow:hidden;
+  }
+  .hero h1 .line{
+    display:block;
+    clip-path: inset(0 100% 0 0);
+    animation: wipe 0.9s cubic-bezier(.65,0,.35,1) forwards;
+  }
+  .hero h1 .line:nth-child(2){ animation-delay:.16s; }
+  .hero h1 .line:nth-child(3){ animation-delay:.32s; }
+  @keyframes wipe{ to{ clip-path: inset(0 0 0 0); } }
+  .hero .sub{
+    margin-top:26px;
+    font-size:18px;
+    max-width:52ch;
+    opacity:0;
+    animation: rise .7s ease forwards;
+    animation-delay:.7s;
+  }
+  @keyframes rise{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+  .cta-row{
+    margin-top:38px; display:flex; gap:14px; flex-wrap:wrap;
+    opacity:0; animation: rise .7s ease forwards; animation-delay:.9s;
+  }
+  .btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px; letter-spacing:0.08em; text-transform:uppercase;
+    padding:14px 22px;
+    border:1px solid var(--ink);
+    text-decoration:none;
+    display:inline-flex; align-items:center; gap:10px;
+    transition:background .25s, color .25s;
+  }
+  .btn.solid{ background:var(--ink); color:var(--paper); }
+  .btn.solid:hover{ background:var(--mud); border-color:var(--mud); }
+  .btn.ghost:hover{ background:var(--ink); color:var(--paper); }
+  .hero-meta{
+    position:absolute; bottom:28px; left:0; right:0;
+    display:flex; justify-content:space-between;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em;
+    color:var(--ink-soft); text-transform:uppercase;
+    padding:0 28px;
+  }
+
+  /* reveal on scroll */
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* generic section layout */
+  .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:64px; align-items:start; }
+  .kicker-h2{ font-size:clamp(34px,5vw,58px); max-width:14ch; margin-bottom:22px; }
+
+  /* tarif rows */
+  .tarifs{ margin-top:22px; border-top:1px solid var(--line); }
+  .tarif-row{
+    display:flex; justify-content:space-between; gap:20px;
+    padding:14px 0; border-bottom:1px solid var(--line);
+    font-family:'IBM Plex Mono', monospace; font-size:13.5px;
+  }
+  .tarif-row .label{ color:var(--ink); }
+  .tarif-row .price{ color:var(--ink-soft); white-space:nowrap; }
+
+  /* ESPACE section */
+  #espace{ background:var(--paper-alt); }
+
+  /* ATELIER */
+  .tech-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:1px;
+    background:var(--line); margin-top:36px; border:1px solid var(--line);
+  }
+  .tech-cell{ background:var(--paper); padding:26px; }
+  .tech-cell .name{ font-family:'Big Shoulders', sans-serif; font-weight:700; font-size:22px; text-transform:uppercase; }
+  .tech-cell .price{ font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--accent); margin-top:6px; display:block; }
+  .tech-cell.soon{ opacity:0.55; }
+  .tag-soon{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; border:1px solid var(--ink-soft); padding:2px 8px; border-radius:20px; margin-left:8px; vertical-align:middle; }
+
+  /* BRAND sections */
+  .brand-section{ color:var(--paper); }
+  .brand-section .eyebrow{ color:var(--paper); opacity:.75; }
+  .brand-section .eyebrow::before{ background:var(--paper); opacity:.75; }
+  .brand-section p{ color:rgba(234,230,221,0.82); }
+  .brand-section .btn{ border-color:var(--paper); color:var(--paper); }
+  .brand-section .btn.ghost:hover{ background:var(--paper); color:var(--ink); }
+  #marginal{ background:var(--marginal); }
+  #bizness{ background:var(--bizness); }
+  .brand-mark{
+    font-family:'Big Shoulders Stencil', sans-serif; font-weight:900;
+    font-size:clamp(30px,4.4vw,44px); letter-spacing:0.02em;
+    opacity:0.9; margin-bottom:8px;
+  }
+  .brand-role{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    color:rgba(234,230,221,0.7); margin-top:22px;
+  }
+
+  /* CREATIF */
+  .service-list{ list-style:none; margin:26px 0 0; padding:0; }
+  .service-list li{
+    padding:18px 0; border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; gap:20px; align-items:baseline;
+  }
+  .service-list .sname{ font-family:'Big Shoulders', sans-serif; font-size:20px; font-weight:700; text-transform:uppercase; }
+  .service-list .srange{ font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--ink-soft); white-space:nowrap; }
+
+  /* EQUIPE */
+  .team-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:36px; margin-top:40px; }
+  .team-card .num{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--accent); }
+  .team-card h3{ font-size:26px; margin-top:8px; text-transform:none; font-weight:700; }
+  .team-card .role{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin:6px 0 12px; }
+
+  /* FOOTER */
+  footer{ background:var(--ink); color:var(--paper); padding:80px 0 34px; }
+  footer .eyebrow{ color:var(--paper); opacity:.6; }
+  footer .eyebrow::before{ background:var(--paper); opacity:.6;}
+  footer h2{ color:var(--paper); font-size:clamp(38px,6vw,72px); max-width:14ch; }
+  footer .foot-grid{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:30px; margin-top:56px; font-family:'IBM Plex Mono', monospace; font-size:13px; }
+  footer .foot-grid a{ text-decoration:none; color:rgba(234,230,221,0.85); }
+  footer .foot-col div{ margin-bottom:8px; opacity:.85; }
+  footer .bottom{ margin-top:60px; padding-top:22px; border-top:1px solid rgba(234,230,221,0.18); font-family:'IBM Plex Mono', monospace; font-size:11px; opacity:.55; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  @media (max-width: 860px){
+    .grid2{ grid-template-columns:1fr; gap:36px; }
+    .tech-grid{ grid-template-columns:1fr; }
+    .team-grid{ grid-template-columns:1fr; }
+    header nav{ display:none; }
+    section{ padding:76px 0; }
+    .hero{ padding-top:120px; }
+  }
+
+  :focus-visible{ outline:2px solid var(--ink); outline-offset:3px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+    .hero h1 .line{ clip-path:none; }
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="logo">MUD STUDIO</div>
+  <nav>
+    <a href="#espace">L'espace</a>
+    <a href="#atelier">L'atelier</a>
+    <a href="#marginal">Marginal Mouvement</a>
+    <a href="#bizness">Maison Bizness</a>
+    <a href="#creatif">Créatif</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="regmark tl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="7"/><line x1="12" y1="0" x2="12" y2="24"/><line x1="0" y1="12" x2="24" y2="12"/></svg></div>
+  <div class="wrap">
+    <div class="eyebrow">Montreuil · 93</div>
+    <h1>
+      <span class="line">Un espace</span>
+      <span class="line">d'exposition,</span>
+      <span class="line">un atelier textile</span>
+    </h1>
+    <p class="sub">Mud Studio accueille expositions, pop-up stores et séances photo dans un espace de 20&nbsp;m², et fabrique en petites séries pour des marques indépendantes dans son atelier de sérigraphie, DTF et flex.</p>
+    <div class="cta-row">
+      <a href="#espace" class="btn solid">Découvrir l'espace →</a>
+      <a href="#atelier" class="btn ghost">Voir l'atelier</a>
+    </div>
+  </div>
+  <div class="hero-meta">
+    <span>Sérigraphie / DTF / Flex</span>
+    <span>32 rue de Barbès</span>
+  </div>
+</section>
+
+<!-- ESPACE -->
+<section id="espace">
+  <div class="regmark br"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="7"/><line x1="12" y1="0" x2="12" y2="24"/><line x1="0" y1="12" x2="24" y2="12"/></svg></div>
+  <div class="wrap reveal">
+    <div class="grid2">
+      <div>
+        <div class="eyebrow">L'espace — 20 m²</div>
+        <h2 class="kicker-h2">Expositions, pop-up, séances photo</h2>
+        <p>Un lieu brut et modulable, pensé pour accueillir des formats variés : expositions photo, pop-up stores, événements ponctuels, ou encore location à d'autres professionnels (tatoueurs, praticiens) lors des jours creux.</p>
+        <a href="#contact" class="btn solid" style="margin-top:8px;">Réserver l'espace →</a>
+      </div>
+      <div>
+        <div class="tarifs">
+          <div class="tarif-row"><span class="label">Demi-journée</span><span class="price">80 – 150 €</span></div>
+          <div class="tarif-row"><span class="label">Journée complète</span><span class="price">150 – 250 €</span></div>
+          <div class="tarif-row"><span class="label">Soirée événementielle</span><span class="price">200 – 400 €</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATELIER -->
+<section id="atelier">
+  <div class="wrap reveal">
+    <div class="eyebrow">L'atelier</div>
+    <h2 class="kicker-h2">Sérigraphie, DTF, flex<span class="tag-soon">Broderie bientôt</span></h2>
+    <p>Nous produisons en petites séries pour des marques indépendantes et des particuliers. Chaque commande fait l'objet d'un échange direct avant fabrication — pas de minimum imposé qui n'a pas de sens pour vous.</p>
+    <div class="tech-grid">
+      <div class="tech-cell">
+        <span class="name">Sérigraphie</span>
+        <span class="price">8 – 9 € / pièce · série ~100</span>
+      </div>
+      <div class="tech-cell">
+        <span class="name">DTF</span>
+        <span class="price">3 – 6 € / pièce · 1 à 50 unités</span>
+      </div>
+      <div class="tech-cell">
+        <span class="name">Flex / flocage</span>
+        <span class="price">2,50 – 5 € / pièce</span>
+      </div>
+      <div class="tech-cell soon">
+        <span class="name">Broderie</span>
+        <span class="price">4 – 6 € / pièce · à venir</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARGINAL MOUVEMENT -->
+<section id="marginal" class="brand-section">
+  <div class="wrap reveal">
+    <div class="grid2">
+      <div>
+        <div class="eyebrow">Marque résidente</div>
+        <div class="brand-mark">Marginal Mouvement</div>
+        <h2 class="kicker-h2" style="color:var(--paper);">Streetwear, fabriqué sur place</h2>
+      </div>
+      <div>
+        <p>Marginal Mouvement est une marque de streetwear qui fabrique une partie de ses collections directement dans l'atelier Mud Studio.</p>
+        <div class="brand-role">Résidente de l'atelier depuis l'ouverture</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAISON BIZNESS -->
+<section id="bizness" class="brand-section">
+  <div class="wrap reveal">
+    <div class="grid2">
+      <div>
+        <div class="eyebrow">Marque résidente</div>
+        <div class="brand-mark">Maison Bizness</div>
+        <h2 class="kicker-h2" style="color:var(--paper);">Streetwear, fabriqué sur place</h2>
+      </div>
+      <div>
+        <p>Maison Bizness est une marque de streetwear qui fabrique une partie de ses collections directement dans l'atelier Mud Studio.</p>
+        <div class="brand-role">Résidente de l'atelier depuis l'ouverture</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREATIF -->
+<section id="creatif">
+  <div class="wrap reveal">
+    <div class="eyebrow">Accompagnement</div>
+    <h2 class="kicker-h2">Logo, identité, site web</h2>
+    <p>Au-delà de la production, nous accompagnons les marques indépendantes sur leur direction artistique.</p>
+    <ul class="service-list">
+      <li><span class="sname">Logo simple</span><span class="srange">300 – 600 €</span></li>
+      <li><span class="sname">Identité visuelle complète</span><span class="srange">600 – 1 200 €</span></li>
+      <li><span class="sname">Logo 3D / animation</span><span class="srange">400 – 900 €</span></li>
+      <li><span class="sname">Site vitrine</span><span class="srange">1 200 – 2 500 €</span></li>
+      <li><span class="sname">Boutique en ligne</span><span class="srange">2 000 – 4 000 €</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- EQUIPE -->
+<section id="equipe">
+  <div class="wrap reveal">
+    <div class="eyebrow">L'équipe</div>
+    <h2 class="kicker-h2">Trois fondateurs, trois savoir-faire</h2>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="num">01</div>
+        <h3>Thomas Kanthack</h3>
+        <div class="role">Président · Sérigraphie & Web</div>
+        <p>Sérigraphie et flocage depuis le lycée. Développeur web, codéveloppeur de KNIT, plateforme dédiée aux marques indépendantes.</p>
+      </div>
+      <div class="team-card">
+        <div class="num">02</div>
+        <h3>Ludo Harlay</h3>
+        <div class="role">Événementiel & Espace</div>
+        <p>Formation en 3D. En charge de l'espace exposition et de la programmation des événements.</p>
+      </div>
+      <div class="team-card">
+        <div class="num">03</div>
+        <h3>Victor Cohen</h3>
+        <div class="role">Atelier & Commandes</div>
+        <p>Organise régulièrement des pop-up stores pour la Fashion Week de Paris. En charge de l'atelier et du suivi des commandes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER / CONTACT -->
+<footer id="contact">
+  <div class="wrap">
+    <div class="eyebrow">Contact</div>
+    <h2>Un projet, une question,<br>une location d'espace ?</h2>
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div>32 rue de Barbès</div>
+        <div>93100 Montreuil</div>
+      </div>
+      <div class="foot-col">
+        <div><a href="mailto:contact@mud-studio.fr">contact@mud-studio.fr</a></div>
+        <div><a href="#">Instagram</a></div>
+      </div>
+      <div class="foot-col">
+        <div>Lun – Sam</div>
+        <div>Sur rendez-vous</div>
+      </div>
+    </div>
+    <div class="bottom">
+      <span>Mud Studio — Montreuil</span>
+      <span>Sérigraphie · DTF · Flex</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // header background on scroll
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

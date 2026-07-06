@@ -3,12 +3,31 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Mud Studio brand palette */
+  --paper: #eae6dd;
+  --paper-alt: #dfdacb;
+  --ink: #1c1917;
+  --ink-soft: #4a443d;
+  --mud: #7a4f35;
+  --marginal: #b23a1e;
+  --bizness: #2f4a3e;
+  --line: rgba(28, 25, 23, 0.16);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-ibm-plex-sans), Helvetica, Arial, sans-serif;
+
+  --color-paper: var(--paper);
+  --color-paper-alt: var(--paper-alt);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-mud: var(--mud);
+  --color-marginal: var(--marginal);
+  --color-bizness: var(--bizness);
+  --color-line: var(--line);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,4 +41,9 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-ibm-plex-sans), Helvetica, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
 }
