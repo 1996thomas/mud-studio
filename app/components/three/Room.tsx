@@ -1,44 +1,28 @@
-'use client'
+import {
+  DEPTH,
+  WALL_T,
+  HEIGHT,
+  WIDTH_ATELIER,
+  WIDTH_EXPO,
+  X_DIVIDE,
+  X_EXPO_START,
+  X_RIGHT,
+  DOOR_Z0,
+  DOOR_WIDTH,
+  DOOR_Z1,
+  DOOR_HEIGHT,
+  ENTRY_DOOR_X0,
+  ENTRY_DOOR_WIDTH,
+  ENTRY_DOOR_X1,
+  MULLION_W,
+  GLASS_X0,
+  GLASS_WIDTH,
+  GLASS_SPLIT,
+  WALL_COLOR,
+  FRAME_COLOR,
+} from './roomGeometry'
 
-import { useMemo, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
-import FisheyeEffect from './FisheyeEffect'
-
-// Dimensions réelles du local (m) — les deux pièces sont côte à côte, même profondeur,
-// séparées par un mur porteur avec une porte sur la gauche de l'atelier.
-// x=0 est le mur extérieur gauche (atelier), x augmente vers la droite (salle d'expo, côté rue).
-// z=0 est la façade rue, la profondeur augmente vers le fond du bâtiment.
-const DEPTH = 5.5
-const WALL_T = 0.2
-const HEIGHT = 2.7
-
-const WIDTH_ATELIER = 5.8 // ~32m² au calcul (51 - 19.25) / 5.5
-const WIDTH_EXPO = 3.5 // 19.25m² — salle d'expo / pop store, façade rue
-
-const X_DIVIDE = WIDTH_ATELIER
-const X_EXPO_START = X_DIVIDE + WALL_T
-const X_RIGHT = X_EXPO_START + WIDTH_EXPO
-
-// Porte intérieure atelier <-> expo, sur le mur séparateur, côté rue (à gauche en entrant)
-const DOOR_Z0 = 0.3
-const DOOR_WIDTH = 1.0
-const DOOR_Z1 = DOOR_Z0 + DOOR_WIDTH
-const DOOR_HEIGHT = 2.1
-
-// Façade rue : porte d'entrée à gauche (côté mur séparateur), vitrine (2 vitres) à droite
-const ENTRY_DOOR_X0 = X_EXPO_START
-const ENTRY_DOOR_WIDTH = 1.0
-const ENTRY_DOOR_X1 = ENTRY_DOOR_X0 + ENTRY_DOOR_WIDTH
-const MULLION_W = 0.1
-const GLASS_X0 = ENTRY_DOOR_X1 + MULLION_W
-const GLASS_WIDTH = 2.0
-const GLASS_SPLIT = GLASS_X0 + GLASS_WIDTH / 2 // séparation entre les 2 vitres
-
-const WALL_COLOR = '#eae6dd'
-const FRAME_COLOR = '#7a4f35'
-
-function Room() {
+export function Room() {
   return (
     <group>
       {/* Sols */}
@@ -151,7 +135,7 @@ function Room() {
 }
 
 // Volumes très simples pour donner une échelle aux deux pièces — pas de vrai mobilier
-function Props() {
+export function Props() {
   return (
     <group>
       {/* Atelier — tables de sérigraphie */}
@@ -174,122 +158,5 @@ function Props() {
         <meshStandardMaterial color="#b23a1e" />
       </mesh>
     </group>
-  )
-}
-
-// Parcours caméra : un vrai traveling — hauteur d'œil fixe, jamais de visée oblique.
-// La position bouge sur 2 axes (x, z) ; le cap (angle horizontal) reste constant
-// pendant chaque ligne droite et ne tourne que ponctuellement (le virage vers la porte).
-const ENTRY_X = (ENTRY_DOOR_X0 + ENTRY_DOOR_X1) / 2
-const EYE_Y = 1
-
-// Cap 0 = plein +Z (on rentre dans le bâtiment) ; -π/2 = plein -X (vers l'atelier)
-const HEADING_STREET = 0
-const HEADING_ATELIER = -Math.PI / 2
-
-type Seg = {
-  t0: number
-  t1: number
-  posA: THREE.Vector2 // (x, z) — la hauteur reste fixe (EYE_Y)
-  posB: THREE.Vector2
-  headingA: number
-  headingB: number
-}
-
-const CAM_PATH: Seg[] = [
-  // Rue -> à travers la porte d'entrée, tout droit
-  {
-    t0: 0.0,
-    t1: 0.3,
-    posA: new THREE.Vector2(ENTRY_X, -2.4),
-    posB: new THREE.Vector2(ENTRY_X, 1.0),
-    headingA: HEADING_STREET,
-    headingB: HEADING_STREET,
-  },
-  // Virage vers la porte de l'atelier — on s'éloigne du mur pendant qu'on tourne,
-  // pour ne jamais se retrouver à le fixer de très près
-  {
-    t0: 0.3,
-    t1: 0.44,
-    posA: new THREE.Vector2(ENTRY_X, 1.0),
-    posB: new THREE.Vector2(8.0, 0.8),
-    headingA: HEADING_STREET,
-    headingB: HEADING_ATELIER,
-  },
-  // Ligne droite, plein axe, jusqu'à la porte de l'atelier et à travers
-  {
-    t0: 0.44,
-    t1: 0.78,
-    posA: new THREE.Vector2(8.0, 0.8),
-    posB: new THREE.Vector2(5.3, 0.8),
-    headingA: HEADING_ATELIER,
-    headingB: HEADING_ATELIER,
-  },
-  // Ligne droite dans l'atelier, entre les deux tables
-  {
-    t0: 0.78,
-    t1: 1.0,
-    posA: new THREE.Vector2(5.3, 0.8),
-    posB: new THREE.Vector2(3.0, 1.0),
-    headingA: HEADING_ATELIER,
-    headingB: HEADING_ATELIER,
-  },
-]
-
-function sampleCamPath(progress: number, outPos: THREE.Vector3, outTarget: THREE.Vector3) {
-  let i = 0
-  while (i < CAM_PATH.length - 1 && progress > CAM_PATH[i].t1) i++
-  const seg = CAM_PATH[i]
-  const local = THREE.MathUtils.clamp((progress - seg.t0) / (seg.t1 - seg.t0), 0, 1)
-  const eased = THREE.MathUtils.smootherstep(local, 0, 1)
-
-  const x = THREE.MathUtils.lerp(seg.posA.x, seg.posB.x, eased)
-  const z = THREE.MathUtils.lerp(seg.posA.y, seg.posB.y, eased)
-  const heading = THREE.MathUtils.lerp(seg.headingA, seg.headingB, eased)
-
-  outPos.set(x, EYE_Y, z)
-  outTarget.set(x + Math.sin(heading), EYE_Y, z + Math.cos(heading))
-}
-
-function CameraRig({ progressRef }: { progressRef: React.RefObject<number> }) {
-  const pos = useRef(new THREE.Vector3())
-  const target = useRef(new THREE.Vector3())
-
-  useFrame(({ camera }) => {
-    sampleCamPath(progressRef.current, pos.current, target.current)
-    camera.position.copy(pos.current)
-    camera.lookAt(target.current)
-  })
-
-  return null
-}
-
-function Lights() {
-  const atelierLight = useMemo(() => new THREE.Vector3(WIDTH_ATELIER / 2, HEIGHT - 0.2, DEPTH / 2), [])
-  const expoLight = useMemo(
-    () => new THREE.Vector3(X_EXPO_START + WIDTH_EXPO / 2, HEIGHT - 0.2, DEPTH / 2),
-    []
-  )
-
-  return (
-    <>
-      <ambientLight intensity={0.7} color="#f3efe4" />
-      <pointLight position={atelierLight} intensity={22} color="#caa27a" distance={9} decay={2} />
-      <pointLight position={expoLight} intensity={16} color="#fff3e0" distance={7} decay={2} />
-    </>
-  )
-}
-
-export default function SpaceScene({ progressRef, isDesktop }: { progressRef: React.RefObject<number>; isDesktop: boolean }) {
-  return (
-    <Canvas camera={{ fov: isDesktop ? 75 : 90, near: 0.1, far: 50 }} dpr={[1, 1.75]}>
-      <color attach="background" args={['#171310']} />
-      <fog attach="fog" args={['#171310', 7, 20]} />
-      <CameraRig progressRef={progressRef} />
-      <Lights />
-      <Room />
-      <Props />
-      <FisheyeEffect strength={0.22} />
-    </Canvas>
   )
 }

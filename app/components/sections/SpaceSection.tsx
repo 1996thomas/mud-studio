@@ -1,110 +1,100 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Eyebrow } from '@/app/components/ui/Eyebrow'
-
-gsap.registerPlugin(ScrollTrigger)
+import type { Poi } from '@/app/components/three/tourData'
 
 // WebGL — jamais chargé côté serveur ni avant que la section soit montée
-const SpaceScene = dynamic(() => import('@/app/components/three/SpaceScene'), { ssr: false })
-const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024
-// Le crossfade des labels suit le moment où la caméra franchit la porte intérieure
-// (voir CAM_PATH dans SpaceScene — le seuil de la porte est franchi vers 0.65-0.78)
-const FADE_START = 0.65
-const FADE_END = 0.78
+const TourScene = dynamic(() => import('@/app/components/three/TourScene'), { ssr: false })
+
+const ROOM_LABELS: Record<string, { number: string; area: string; title: string[] }> = {
+  expo: { number: '01', area: '19m²', title: ["Salle d'expo", '— Pop Store'] },
+  atelier: { number: '02', area: '32m²', title: ['Atelier de', 'sérigraphie'] },
+}
 
 export default function SpaceSection() {
-  const outerRef = useRef<HTMLDivElement>(null)
-  const progressRef = useRef(0)
-  const atelierLabelRef = useRef<HTMLDivElement>(null)
-  const expoLabelRef = useRef<HTMLDivElement>(null)
+  const [currentNodeId, setCurrentNodeId] = useState('street')
+  const [activePoi, setActivePoi] = useState<Poi | null>(null)
 
-  useEffect(() => {
-    const outer = outerRef.current
-    if (!outer) return
-
-    const SCREENS = 2.6
-
-    const setHeight = () => {
-      outer.style.height = `${window.innerHeight * SCREENS}px`
-    }
-    setHeight()
-
-    const ctx = gsap.context(() => {
-      const trigger = ScrollTrigger.create({
-        trigger: outer,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 0.5,
-        onUpdate: (self) => {
-          progressRef.current = self.progress
-          // Crossfade : salle d'expo visible en premier, atelier après avoir passé la porte
-          const span = FADE_END - FADE_START
-          const expoOpacity = Math.min(1, Math.max(0, 1 - (self.progress - FADE_START) / span))
-          const atelierOpacity = Math.min(1, Math.max(0, (self.progress - FADE_START) / span))
-          if (expoLabelRef.current) expoLabelRef.current.style.opacity = String(expoOpacity)
-          if (atelierLabelRef.current) atelierLabelRef.current.style.opacity = String(atelierOpacity)
-        },
-      })
-
-      const onResize = () => {
-        setHeight()
-        ScrollTrigger.refresh()
-      }
-      window.addEventListener('resize', onResize)
-      requestAnimationFrame(() => ScrollTrigger.refresh())
-
-      return () => {
-        window.removeEventListener('resize', onResize)
-        trigger.kill()
-      }
-    }, outer)
-
-    return () => ctx.revert()
-  }, [])
+  const label = ROOM_LABELS[currentNodeId]
 
   return (
-    <section ref={outerRef} className="relative" style={{ background: '#171310' }}>
-      <div className="sticky top-0 h-screen overflow-hidden">
-        <div className="absolute inset-0">
-          <SpaceScene progressRef={progressRef} isDesktop={isDesktop} />
-        </div>
+    <section className="relative h-screen w-full" style={{ background: '#171310' }}>
+      <div className="absolute inset-0">
+        <TourScene
+          currentNodeId={currentNodeId}
+          activePoi={activePoi}
+          onNavigate={(nodeId) => {
+            setActivePoi(null)
+            setCurrentNodeId(nodeId)
+          }}
+          onFocusPoi={setActivePoi}
+        />
+      </div>
 
-        {/* Overlay */}
-        <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-4 sm:p-8">
-          <Eyebrow className="text-white/70">L&apos;espace — 51m²</Eyebrow>
+      {/* Overlay */}
+      <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-4 sm:p-8">
+        <Eyebrow className="text-white/70">L&apos;espace — 51m²</Eyebrow>
 
-          <div className="relative h-32 sm:h-40">
-            <div ref={expoLabelRef} className="absolute inset-x-0 bottom-0">
-              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/50">
-                01 · 19m²
-              </span>
-              <h3 className="mt-2 text-[clamp(2rem,5vw,3.5rem)] font-black uppercase leading-[0.95] text-white">
-                Salle d&apos;expo
-                <br />— Pop Store
-              </h3>
-            </div>
+        <div className="flex items-end justify-between gap-4">
+          <div className="relative h-24 sm:h-32">
+            {label && (
+              <div className="absolute inset-x-0 bottom-0 transition-opacity duration-500">
+                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/50">
+                  {label.number} · {label.area}
+                </span>
+                <h3 className="mt-2 text-[clamp(1.6rem,4.5vw,3rem)] font-black uppercase leading-[0.95] text-white">
+                  {label.title.map((line, i) => (
+                    <span key={i}>
+                      {line}
+                      {i < label.title.length - 1 && <br />}
+                    </span>
+                  ))}
+                </h3>
+              </div>
+            )}
 
-            <div
-              ref={atelierLabelRef}
-              className="absolute inset-x-0 bottom-0"
-              style={{ opacity: 0 }}
-            >
-              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/50">
-                02 · 32m²
-              </span>
-              <h3 className="mt-2 text-[clamp(2rem,5vw,3.5rem)] font-black uppercase leading-[0.95] text-white">
-                Atelier de
-                <br />
-                sérigraphie
-              </h3>
-            </div>
+            {currentNodeId === 'street' && (
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/60">
+                Cliquez sur le repère pour entrer
+              </p>
+            )}
           </div>
+
+          {currentNodeId !== 'street' && (
+            <p className="hidden font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 sm:block">
+              Glissez pour regarder autour · Cliquez sur les repères
+            </p>
+          )}
         </div>
       </div>
+
+      {/* Panneau d'info point d'intérêt */}
+      {activePoi && (
+        <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center p-4 sm:p-8">
+          <div
+            className="pointer-events-auto w-full max-w-md rounded-sm border p-5"
+            style={{
+              background: 'rgba(23,19,16,0.92)',
+              borderColor: 'rgba(234,230,221,0.18)',
+              backdropFilter: 'blur(6px)',
+            }}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <h4 className="text-sm font-black uppercase tracking-wide text-white">{activePoi.title}</h4>
+              <button
+                onClick={() => setActivePoi(null)}
+                className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 hover:text-white"
+                aria-label="Fermer"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-white/70">{activePoi.description}</p>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
