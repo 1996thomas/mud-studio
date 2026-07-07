@@ -131,11 +131,65 @@ export default function BrandsSection() {
     <section ref={outerRef} className="relative bg-[var(--color-paper)]">
       <div className="sticky top-0 h-screen overflow-hidden">
 
-        {/* BASE LAYER */}
-        <div className="absolute inset-0 flex flex-col justify-between py-10 flex justify-center items-center">
-          <h2 className="text-center text-[clamp(3rem,8vw,7rem)] font-black text-black/80 uppercase">
-            Les marques résidentes
-          </h2>
+        {/* BASE LAYER — même structure que HeroSection, visible avant que les cards arrivent */}
+        <div
+          className="absolute inset-0 flex flex-col justify-between p-4 pt-8 pb-8"
+          style={{ color: 'var(--color-ink)' }}
+        >
+          {/* Top bar */}
+          <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--color-line)', paddingBottom: '1.5rem' }}>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: 'var(--color-mud)' }}>
+              Mud Studio · Résidences
+            </p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: 'var(--color-ink-soft)' }}>
+              Montreuil · 93
+            </p>
+          </div>
+
+          {/* Headline + description */}
+          <div className="flex flex-1 flex-col justify-end pb-10 pt-16">
+            <h2
+              className="text-[clamp(3rem,8vw,7rem)] font-black uppercase leading-[0.92]"
+              style={{ color: 'var(--color-ink)' }}
+            >
+              {['Des marques', 'qui produisent', 'sur place'].map((line, i) => (
+                <span key={i} className="block">{line}</span>
+              ))}
+            </h2>
+
+            <div
+              className="mt-10 grid gap-8 border-t pt-8 sm:grid-cols-2"
+              style={{ borderColor: 'var(--color-line)' }}
+            >
+              <p
+                className="max-w-[48ch] text-base leading-relaxed"
+                style={{ color: 'var(--color-ink-soft)' }}
+              >
+                Mud Studio accueille des marques indépendantes dans son atelier.
+                Chaque résident conçoit et fabrique directement sur place —
+                sérigraphie, DTF ou flex.
+              </p>
+
+              {/* Scroll hint */}
+              <div className="flex items-end justify-end sm:justify-start">
+                <div className="flex items-center gap-3" style={{ color: 'var(--color-ink-soft)' }}>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="animate-bounce" aria-hidden>
+                    <path d="M10 3v14M10 17l-4-4M10 17l4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span className="font-mono text-[11px] uppercase tracking-[0.22em]">Scroll</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom meta bar */}
+          <div
+            className="flex justify-between font-mono text-[11px] uppercase tracking-widest"
+            style={{ color: 'var(--color-ink-soft)', borderTop: '1px solid var(--color-line)', paddingTop: '1.25rem' }}
+          >
+            <span>02 résidentes · 01 partenaire</span>
+            <span>Sérigraphie · DTF · Flex</span>
+          </div>
         </div>
 
         {/* CARDS */}

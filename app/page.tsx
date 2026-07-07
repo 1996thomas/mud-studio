@@ -3,7 +3,9 @@
 import dynamic from 'next/dynamic'
 import HeroSection from '@/app/components/sections/HeroSection'
 import BrandsSection from '@/app/components/sections/BrandsSection'
+import TeamIntroSection from '@/app/components/sections/TeamIntroSection'
 import TeamSection from '@/app/components/sections/TeamSection'
+import SpaceIntroSection from '@/app/components/sections/SpaceIntroSection'
 import FooterSection from '@/app/components/sections/FooterSection'
 
 const SpaceSection = dynamic(
@@ -19,7 +21,9 @@ export default function Home() {
     <>
       <HeroSection />
       <BrandsSection />
+      <TeamIntroSection />
       <TeamSection />
+      <SpaceIntroSection />
       <SpaceSection />
       <FooterSection />
     </>
