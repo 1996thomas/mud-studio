@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Sans } from 'next/font/google'
 import './globals.css'
 import LenisProvider from '@/app/components/LenisProvider'
@@ -87,6 +87,11 @@ export const metadata: Metadata = {
     ],
     shortcut: '/favicon.ico',
   },
+}
+
+// viewport-fit=cover: contenu sous l'encoche iPhone, safe-area-inset-* gère les marges
+export const viewport: Viewport = {
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({

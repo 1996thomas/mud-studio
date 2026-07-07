@@ -110,7 +110,7 @@ export default function TeamSection() {
             {/* Leading spacer — desktop only */}
             <div
               className="hidden md:block flex-none"
-              style={{ width: 'calc((100vw - (100vh - 220px) * 0.75) / 2)' }}
+              style={{ width: 'calc((100vw - (100dvh - 220px) * 0.75) / 2)' }}
             />
 
             {MEMBERS.map((member, i) => (
@@ -120,7 +120,7 @@ export default function TeamSection() {
                   relative flex-none overflow-hidden rounded-2xl
                   snap-center
                   w-[80vw] h-[107vw]
-                  md:w-[calc((100vh-220px)*0.75)] md:h-[calc(100vh-220px)]
+                  md:w-[calc((100dvh-220px)*0.75)] md:h-[calc(100dvh-220px)]
                 "
               >
                 {/* Photo placeholder */}
@@ -165,7 +165,7 @@ export default function TeamSection() {
             {/* Trailing spacer — desktop only */}
             <div
               className="hidden md:block flex-none"
-              style={{ width: 'calc((100vw - (100vh - 220px) * 0.75) / 2)' }}
+              style={{ width: 'calc((100vw - (100dvh - 220px) * 0.75) / 2)' }}
             />
           </div>
         </div>
