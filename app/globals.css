@@ -43,22 +43,6 @@ body {
   font-family: var(--font-ibm-plex-sans), Helvetica, Arial, sans-serif;
 }
 
-/* ─── Mobile viewport height fix ───────────────────────────────────────────
-   100vh includes the browser chrome (address bar) on iOS Safari and Chrome
-   Android — elements sized with h-screen/min-h-screen are taller than the
-   visible area, causing clipped content and scroll bugs.
-
-   100dvh (Dynamic Viewport Height) always equals the *actual visible* viewport,
-   adapting as the address bar shows/hides. Unlayered CSS overrides Tailwind's
-   @layer utilities at the same specificity, so this wins automatically.
-   100vh is kept as a fallback for browsers that don't support dvh (< 2022).
-   ────────────────────────────────────────────────────────────────────────── */
-@supports (height: 100dvh) {
-  .h-screen     { height:     100dvh; }
-  .min-h-screen { min-height: 100dvh; }
-  .h-full       { height:     100%;   } /* unchanged — just documenting no change needed */
-}
-
 /* Safe-area insets — required once viewport-fit=cover is set.
    Prevents content from hiding behind iPhone notch or home indicator. */
 body {

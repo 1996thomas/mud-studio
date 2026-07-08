@@ -13,10 +13,10 @@ const SpaceSection = dynamic(
   {
     ssr: false,
     // h-screen, pas minHeight:'100vh' en inline style : le vrai composant utilise
-    // h-screen (mappé en 100dvh sur mobile, voir globals.css). Si le placeholder
-    // ne fait pas exactement la même hauteur, toute la page se décale d'un coup
-    // quand le composant (lourd — three.js) finit de charger et remplace ce
-    // placeholder, ressenti comme un saut de scroll n'importe où sur la page.
+    // aussi la classe h-screen. Même classe des deux côtés = même hauteur,
+    // garanti — sinon toute la page se décale d'un coup quand le composant
+    // (lourd — three.js) finit de charger et remplace ce placeholder, ressenti
+    // comme un saut de scroll n'importe où sur la page.
     loading: () => <div className="h-screen" style={{ background: '#171310' }} />,
   }
 )
