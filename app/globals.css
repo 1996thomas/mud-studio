@@ -43,31 +43,10 @@ body {
   font-family: var(--font-ibm-plex-sans), Helvetica, Arial, sans-serif;
 }
 
-html {
-  /* Aimante le scroll sur les sections marquées .snap-page (voir sections/*) —
-     BrandsSection et TeamSection (pin + scrub GSAP) n'ont pas cette classe et
-     restent en scroll libre à l'intérieur de leur propre séquence.
-     "proximity" et non "mandatory" : en mandatory, le navigateur résout TOUJOURS
-     vers le point de snap le plus proche, même lointain — s'arrêter n'importe où
-     au milieu du scrub de BrandsSection/TeamSection (qui n'ont pas de snap à eux)
-     faisait alors sauter tout d'un coup vers Hero ou TeamIntro. En proximity, le
-     snap ne s'engage que si on est déjà près d'un point — pas de saut forcé. */
-  scroll-snap-type: y proximity;
-}
-
-.snap-page {
-  scroll-snap-align: start;
-}
-
-/* Mobile : le snap CSS natif est remplacé par MobileSnapController (JS) — voir
-   ce composant pour le pourquoi. Le scroll-snap-align ci-dessus devient un no-op
-   sans scroll-snap-type sur l'ancêtre, donc rien d'autre à faire ici. Desktop
-   (règle ci-dessus) n'est pas concerné par cette media query et reste inchangé. */
-@media (hover: none) and (pointer: coarse) {
-  html {
-    scroll-snap-type: none;
-  }
-}
+/* Le snap de scroll (sections .snap-page) est géré en JS par SnapController,
+   pas en CSS scroll-snap-type — voir ce composant pour le pourquoi (en résumé :
+   "mandatory" saute par-dessus BrandsSection/TeamSection, "proximity" se bat
+   avec les petits scrolls près d'un bord). */
 
 /* ─── Mobile viewport height fix ───────────────────────────────────────────
    100vh includes the browser chrome (address bar) on iOS Safari and Chrome

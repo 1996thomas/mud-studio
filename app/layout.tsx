@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Sans } from 'next/font/google'
 import './globals.css'
 import PageLoader from '@/app/components/PageLoader'
-import { MobileSnapController } from '@/app/components/motion/MobileSnapController'
+import { SnapController } from '@/app/components/motion/SnapController'
 import { SectionNav } from '@/app/components/ui/SectionNav'
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -107,7 +107,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <PageLoader />
-        <MobileSnapController />
+        <SnapController />
         <SectionNav />
         {children}
       </body>
