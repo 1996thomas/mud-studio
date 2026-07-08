@@ -59,6 +59,16 @@ html {
   scroll-snap-align: start;
 }
 
+/* Mobile : le snap CSS natif est remplacé par MobileSnapController (JS) — voir
+   ce composant pour le pourquoi. Le scroll-snap-align ci-dessus devient un no-op
+   sans scroll-snap-type sur l'ancêtre, donc rien d'autre à faire ici. Desktop
+   (règle ci-dessus) n'est pas concerné par cette media query et reste inchangé. */
+@media (hover: none) and (pointer: coarse) {
+  html {
+    scroll-snap-type: none;
+  }
+}
+
 /* ─── Mobile viewport height fix ───────────────────────────────────────────
    100vh includes the browser chrome (address bar) on iOS Safari and Chrome
    Android — elements sized with h-screen/min-h-screen are taller than the

@@ -5,6 +5,7 @@ export default function TeamIntroSection() {
 
   return (
     <section
+      id="section-team"
       className="snap-page relative flex min-h-screen flex-col p-4"
       style={{ background: '#0e0e0e', color: 'var(--color-paper)' }}
     >

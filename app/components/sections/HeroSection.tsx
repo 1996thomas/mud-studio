@@ -6,6 +6,7 @@ export default function HeroSection() {
 
   return (
     <section
+      id="section-home"
       className="snap-page relative flex min-h-screen flex-col p-4"
       style={{ background: 'var(--color-paper)' }}
     >

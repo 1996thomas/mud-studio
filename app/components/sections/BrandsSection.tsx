@@ -135,7 +135,7 @@ export default function BrandsSection() {
   }, [])
 
   return (
-    <section ref={outerRef} className="relative bg-[var(--color-paper)]">
+    <section id="section-brands" ref={outerRef} className="relative bg-[var(--color-paper)]">
       <div className="sticky top-0 h-screen overflow-hidden">
 
         {/* BASE LAYER — même structure que HeroSection, visible avant que les cards arrivent */}
