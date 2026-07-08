@@ -289,7 +289,7 @@ export default function SpaceScene({ progressRef, isDesktop }: { progressRef: Re
       <Lights />
       <Room />
       <Props />
-      <FisheyeEffect strength={0.1} />
+      <FisheyeEffect strength={0.05} />
     </Canvas>
   )
 }

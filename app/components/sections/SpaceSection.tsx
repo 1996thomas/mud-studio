@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Eyebrow } from '@/app/components/ui/Eyebrow'
 import type { Poi } from '@/app/components/three/tourData'
@@ -16,40 +16,16 @@ const ROOM_LABELS: Record<string, { number: string; area: string; title: string[
 export default function SpaceSection() {
   const [currentNodeId, setCurrentNodeId] = useState('street')
   const [activePoi, setActivePoi] = useState<Poi | null>(null)
-  const scrollYRef = useRef(0)
 
   const label = ROOM_LABELS[currentNodeId]
   const entered = currentNodeId !== 'street'
 
-  // Sur mobile, le drag "regarder autour" et le scroll de page utilisent le même
-  // geste tactile — on bloque donc le scroll tant qu'on est "entré" dans la visite,
-  // pour éviter le conflit. Au node de départ (pas encore cliqué), la page défile normalement.
-  useEffect(() => {
-    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches
-    if (!isTouch) return
-
-    if (entered) {
-      scrollYRef.current = window.scrollY
-      document.body.style.position = 'fixed'
-      document.body.style.top = `-${scrollYRef.current}px`
-      document.body.style.left = '0'
-      document.body.style.right = '0'
-    } else {
-      document.body.style.position = ''
-      document.body.style.top = ''
-      document.body.style.left = ''
-      document.body.style.right = ''
-      window.scrollTo(0, scrollYRef.current)
-    }
-
-    return () => {
-      document.body.style.position = ''
-      document.body.style.top = ''
-      document.body.style.left = ''
-      document.body.style.right = ''
-    }
-  }, [entered])
-
+  // Le conflit "drag regarder autour" vs "scroll de page" (même geste tactile) est
+  // géré directement dans TourScene via touch-action:none sur le canvas une fois
+  // "entré" — pas besoin de bloquer le scroll de la page ici. On avait essayé un
+  // hack position:fixed sur le body, mais ça casse le scroll-snap natif (le body
+  // sort du flow, le document perd sa hauteur scrollable, et le navigateur re-snap
+  // n'importe où, typiquement vers le Footer).
   const exitTour = () => {
     setActivePoi(null)
     setCurrentNodeId('street')
