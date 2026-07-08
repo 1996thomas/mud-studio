@@ -44,8 +44,19 @@ body {
 }
 
 html {
-  /* scroll-behavior: smooth conflicts with GSAP ScrollTrigger — Lenis handles smooth scroll on desktop */
-  scroll-padding-top: 88px;
+  /* Aimante le scroll sur les sections marquées .snap-page (voir sections/*) —
+     BrandsSection et TeamSection (pin + scrub GSAP) n'ont pas cette classe et
+     restent en scroll libre à l'intérieur de leur propre séquence.
+     "proximity" et non "mandatory" : en mandatory, le navigateur résout TOUJOURS
+     vers le point de snap le plus proche, même lointain — s'arrêter n'importe où
+     au milieu du scrub de BrandsSection/TeamSection (qui n'ont pas de snap à eux)
+     faisait alors sauter tout d'un coup vers Hero ou TeamIntro. En proximity, le
+     snap ne s'engage que si on est déjà près d'un point — pas de saut forcé. */
+  scroll-snap-type: y proximity;
+}
+
+.snap-page {
+  scroll-snap-align: start;
 }
 
 /* ─── Mobile viewport height fix ───────────────────────────────────────────

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Eyebrow } from '@/app/components/ui/Eyebrow'
 import type { Poi } from '@/app/components/three/tourData'
-import { useSnapSection } from '@/app/components/motion/useSnapSection'
 
 // WebGL — jamais chargé côté serveur ni avant que la section soit montée
 const TourScene = dynamic(() => import('@/app/components/three/TourScene'), { ssr: false })
@@ -18,8 +17,6 @@ export default function SpaceSection() {
   const [currentNodeId, setCurrentNodeId] = useState('street')
   const [activePoi, setActivePoi] = useState<Poi | null>(null)
   const scrollYRef = useRef(0)
-  const sectionRef = useRef<HTMLElement>(null)
-  useSnapSection(sectionRef)
 
   const label = ROOM_LABELS[currentNodeId]
   const entered = currentNodeId !== 'street'
@@ -59,7 +56,7 @@ export default function SpaceSection() {
   }
 
   return (
-    <section ref={sectionRef} className="relative h-screen w-full" style={{ background: '#171310' }}>
+    <section className="snap-page relative h-screen w-full" style={{ background: '#171310' }}>
       <div className="absolute inset-0">
         <TourScene
           currentNodeId={currentNodeId}

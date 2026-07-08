@@ -1,27 +1,20 @@
-'use client'
-
-import { useRef } from 'react'
 import { NewsletterFields } from '@/app/components/newsletter/NewsletterFields'
 import { siteData } from '@/app/data'
 import { config } from '@/app/config'
-import { useSnapSection } from '@/app/components/motion/useSnapSection'
 
 export default function FooterSection() {
   const { brand, footer, newsletter } = siteData
-  const sectionRef = useRef<HTMLElement>(null)
-  useSnapSection(sectionRef)
 
   return (
     <footer
-      ref={sectionRef}
       id="contact"
-      className="relative min-h-screen overflow-hidden"
+      className="snap-page relative h-screen overflow-hidden"
       style={{ background: config.page.background }}
     >
-    
+
       {/* ── Content — sits above the animated bg ───── */}
       <div
-        className="relative z-10 flex min-h-screen flex-col justify-between py-16"
+        className="relative z-10 flex h-screen flex-col justify-center gap-6 p-4 py-8 sm:gap-8"
         style={{ color: 'var(--color-paper)' }}
       >
         <div>
@@ -34,72 +27,68 @@ export default function FooterSection() {
           </p>
 
           {/* Big title */}
-          <h2 className="mt-5 max-w-[14ch] text-[clamp(2.5rem,6vw,5.5rem)] font-black uppercase leading-[0.92]">
+          <h2 className="mt-3 max-w-[14ch] text-[clamp(2rem,5vw,4rem)] font-black uppercase leading-[0.95]">
             {footer.title}
           </h2>
+        </div>
 
-          {/* Contact info grid */}
-          <div
-            className="mt-14 grid gap-10 border-t pt-12 font-mono text-[13px] sm:grid-cols-3"
-            style={{ borderColor: 'rgba(234,230,221,0.12)' }}
-          >
-            {/* Address */}
-            <div className="flex flex-col gap-2">
-              <span style={{ color: 'rgba(234,230,221,0.5)' }} className="mb-1 text-[11px] uppercase tracking-widest">
-                Adresse
-              </span>
-              <span className="opacity-80">{brand.address.street}</span>
-              <span className="opacity-80">{brand.address.city}</span>
-            </div>
+        {/* Adresse · Contact · Horaires · Newsletter — tout sur une ligne pour tenir en 100vh */}
+        <div
+          className="grid gap-6 border-t pt-6 font-mono text-[13px] sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
+          style={{ borderColor: 'rgba(234,230,221,0.12)' }}
+        >
+          {/* Address */}
+          <div className="flex flex-col gap-2">
+            <span style={{ color: 'rgba(234,230,221,0.5)' }} className="mb-1 text-[11px] uppercase tracking-widest">
+              Adresse
+            </span>
+            <span className="opacity-80">{brand.address.street}</span>
+            <span className="opacity-80">{brand.address.city}</span>
+          </div>
 
-            {/* Contact links */}
-            <div className="flex flex-col gap-2">
-              <span style={{ color: 'rgba(234,230,221,0.5)' }} className="mb-1 text-[11px] uppercase tracking-widest">
-                Contact
-              </span>
-              <a
-                href={`mailto:${brand.email}`}
-                className="opacity-80 transition-opacity hover:opacity-100"
-              >
-                {brand.email}
-              </a>
-              <a
-                href={brand.instagramUrl}
-                className="opacity-80 transition-opacity hover:opacity-100"
-              >
-                Instagram
-              </a>
-            </div>
+          {/* Contact links */}
+          <div className="flex flex-col gap-2">
+            <span style={{ color: 'rgba(234,230,221,0.5)' }} className="mb-1 text-[11px] uppercase tracking-widest">
+              Contact
+            </span>
+            <a
+              href={`mailto:${brand.email}`}
+              className="opacity-80 transition-opacity hover:opacity-100"
+            >
+              {brand.email}
+            </a>
+            <a
+              href={brand.instagramUrl}
+              className="opacity-80 transition-opacity hover:opacity-100"
+            >
+              Instagram
+            </a>
+          </div>
 
-            {/* Hours */}
-            <div className="flex flex-col gap-2">
-              <span style={{ color: 'rgba(234,230,221,0.5)' }} className="mb-1 text-[11px] uppercase tracking-widest">
-                Horaires
+          {/* Hours */}
+          <div className="flex flex-col gap-2">
+            <span style={{ color: 'rgba(234,230,221,0.5)' }} className="mb-1 text-[11px] uppercase tracking-widest">
+              Horaires
+            </span>
+            {brand.hours.map((line) => (
+              <span key={line} className="opacity-80">
+                {line}
               </span>
-              {brand.hours.map((line) => (
-                <span key={line} className="opacity-80">
-                  {line}
-                </span>
-              ))}
-            </div>
+            ))}
           </div>
 
           {/* Newsletter */}
-          <div
-            className="mt-14 max-w-md border-t pt-10"
-            style={{ borderColor: 'rgba(234,230,221,0.12)' }}
-          >
-            <h3 className="text-xl font-black uppercase">{newsletter.title}</h3>
-            <p className="mb-5 mt-1 text-sm" style={{ color: 'rgba(234,230,221,0.5)' }}>
-              {newsletter.subtitle}
-            </p>
-            <NewsletterFields tone="onDark" />
+          <div className="flex flex-col gap-2">
+            <span style={{ color: 'rgba(234,230,221,0.5)' }} className="mb-1 text-[11px] uppercase tracking-widest">
+              {newsletter.title}
+            </span>
+            <NewsletterFields tone="onDark" stacked />
           </div>
         </div>
 
         {/* ── Bottom bar ─────────────────────────────── */}
         <div
-          className="mt-16 flex flex-wrap justify-between gap-3 border-t pt-6 text-[11px] uppercase tracking-widest"
+          className="flex flex-wrap justify-between gap-3 border-t pt-4 text-[11px] uppercase tracking-widest"
           style={{
             borderColor: 'rgba(234,230,221,0.12)',
             color: 'rgba(234,230,221,0.4)',
