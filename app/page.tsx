@@ -28,7 +28,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      {/* <BrandsSection /> */}
+      <BrandsSection />
       {/* <TeamIntroSection /> */}
       {/* <TeamSection /> */}
       <SpaceIntroSection />
