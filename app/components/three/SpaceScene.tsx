@@ -35,8 +35,8 @@ const GLASS_X0 = ENTRY_DOOR_X1 + MULLION_W
 const GLASS_WIDTH = 2.0
 const GLASS_SPLIT = GLASS_X0 + GLASS_WIDTH / 2 // séparation entre les 2 vitres
 
-const WALL_COLOR = '#eae6dd'
-const FRAME_COLOR = '#7a4f35'
+const WALL_COLOR = '#ffffff'
+const FRAME_COLOR = '#ffffff'
 
 function Room() {
   return (
@@ -273,7 +273,7 @@ function Lights() {
 
   return (
     <>
-      <ambientLight intensity={0.7} color="#f3efe4" />
+      <ambientLight intensity={0.7} color="#ffffff" />
       <pointLight position={atelierLight} intensity={22} color="#caa27a" distance={9} decay={2} />
       <pointLight position={expoLight} intensity={16} color="#fff3e0" distance={7} decay={2} />
     </>
@@ -282,14 +282,14 @@ function Lights() {
 
 export default function SpaceScene({ progressRef, isDesktop }: { progressRef: React.RefObject<number>; isDesktop: boolean }) {
   return (
-    <Canvas camera={{ fov: isDesktop ? 75 : 90, near: 0.1, far: 50 }} dpr={[1, 1.75]}>
+    <Canvas camera={{ fov: isDesktop ? 50 : 90, near: 0.1, far: 50 }} dpr={[1, 1.75]}>
       <color attach="background" args={['#171310']} />
       <fog attach="fog" args={['#171310', 7, 20]} />
       <CameraRig progressRef={progressRef} />
       <Lights />
       <Room />
       <Props />
-      <FisheyeEffect strength={0.22} />
+      <FisheyeEffect strength={0.1} />
     </Canvas>
   )
 }

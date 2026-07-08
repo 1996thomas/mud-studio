@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Eyebrow } from '@/app/components/ui/Eyebrow'
 import type { Poi } from '@/app/components/three/tourData'
+import { useSnapSection } from '@/app/components/motion/useSnapSection'
 
 // WebGL — jamais chargé côté serveur ni avant que la section soit montée
 const TourScene = dynamic(() => import('@/app/components/three/TourScene'), { ssr: false })
@@ -16,11 +17,49 @@ const ROOM_LABELS: Record<string, { number: string; area: string; title: string[
 export default function SpaceSection() {
   const [currentNodeId, setCurrentNodeId] = useState('street')
   const [activePoi, setActivePoi] = useState<Poi | null>(null)
+  const scrollYRef = useRef(0)
+  const sectionRef = useRef<HTMLElement>(null)
+  useSnapSection(sectionRef)
 
   const label = ROOM_LABELS[currentNodeId]
+  const entered = currentNodeId !== 'street'
+
+  // Sur mobile, le drag "regarder autour" et le scroll de page utilisent le même
+  // geste tactile — on bloque donc le scroll tant qu'on est "entré" dans la visite,
+  // pour éviter le conflit. Au node de départ (pas encore cliqué), la page défile normalement.
+  useEffect(() => {
+    const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    if (!isTouch) return
+
+    if (entered) {
+      scrollYRef.current = window.scrollY
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollYRef.current}px`
+      document.body.style.left = '0'
+      document.body.style.right = '0'
+    } else {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.left = ''
+      document.body.style.right = ''
+      window.scrollTo(0, scrollYRef.current)
+    }
+
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.left = ''
+      document.body.style.right = ''
+    }
+  }, [entered])
+
+  const exitTour = () => {
+    setActivePoi(null)
+    setCurrentNodeId('street')
+  }
 
   return (
-    <section className="relative h-screen w-full" style={{ background: '#171310' }}>
+    <section ref={sectionRef} className="relative h-screen w-full" style={{ background: '#171310' }}>
       <div className="absolute inset-0">
         <TourScene
           currentNodeId={currentNodeId}
@@ -35,7 +74,18 @@ export default function SpaceSection() {
 
       {/* Overlay */}
       <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-4 sm:p-8">
-        <Eyebrow className="text-white/70">L&apos;espace — 51m²</Eyebrow>
+        <div className="flex items-start justify-between">
+          <Eyebrow className="text-white/70">L&apos;espace — 51m²</Eyebrow>
+
+          {entered && (
+            <button
+              onClick={exitTour}
+              className="pointer-events-auto font-mono text-[11px] uppercase tracking-[0.2em] text-white/60 hover:text-white"
+            >
+              ✕ Quitter
+            </button>
+          )}
+        </div>
 
         <div className="flex items-end justify-between gap-4">
           <div className="relative h-24 sm:h-32">
@@ -62,7 +112,7 @@ export default function SpaceSection() {
             )}
           </div>
 
-          {currentNodeId !== 'street' && (
+          {entered && (
             <p className="hidden font-mono text-[11px] uppercase tracking-[0.2em] text-white/40 sm:block">
               Glissez pour regarder autour · Cliquez sur les repères
             </p>

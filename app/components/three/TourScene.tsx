@@ -15,39 +15,37 @@ type CamState = { x: number; z: number; yaw: number; pitch: number }
 const DRAG_SENSITIVITY = 0.0035
 const PITCH_LIMIT = 0.5
 
-// Repère cliquable pour se déplacer d'un node à l'autre — disque au sol, façon Street View
+// Repère cliquable pour se déplacer d'un node à l'autre — rond au sol, façon Street View.
+// En overlay HTML (comme le marqueur POI) : le clic reste précis même déformé par le fisheye,
+// contrairement à un mesh 3D dont le raycasting ignore la distorsion post-process.
 function ConnectionMarker({ position, onClick }: { position: [number, number, number]; onClick: () => void }) {
-  const ref = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState(false)
 
-  useFrame(({ clock }) => {
-    if (!ref.current) return
-    const pulse = 1 + Math.sin(clock.elapsedTime * 2.2) * 0.1
-    ref.current.scale.setScalar((hovered ? 1.3 : 1) * pulse)
-  })
-
   return (
-    <mesh
-      ref={ref}
-      position={position}
-      rotation-x={-Math.PI / 2}
-      onClick={(e) => {
-        e.stopPropagation()
-        onClick()
-      }}
-      onPointerOver={(e) => {
-        e.stopPropagation()
-        setHovered(true)
-        document.body.style.cursor = 'pointer'
-      }}
-      onPointerOut={() => {
-        setHovered(false)
-        document.body.style.cursor = 'auto'
-      }}
-    >
-      <circleGeometry args={[0.32, 32]} />
-      <meshBasicMaterial color="#b23a1e" transparent opacity={hovered ? 0.95 : 0.7} />
-    </mesh>
+    <Html position={position} center zIndexRange={[10, 0]}>
+      <button
+        onClick={(e) => {
+          e.stopPropagation()
+          onClick()
+        }}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        aria-label="Se déplacer ici"
+        className="pointer-events-auto relative rounded-full transition-transform duration-200"
+        style={{
+          width: 44,
+          height: 44,
+          transform: `scale(${hovered ? 1.2 : 1})`,
+          background: hovered ? '#fff3e0' : 'rgba(178,58,30,0.85)',
+          boxShadow: '0 0 0 2px rgba(255,255,255,0.2)',
+        }}
+      >
+        <span
+          className="pointer-events-none absolute inset-0 rounded-full animate-ping"
+          style={{ background: 'rgba(178,58,30,0.5)', animationDuration: '2s' }}
+        />
+      </button>
+    </Html>
   )
 }
 
@@ -116,13 +114,22 @@ function CameraController({ currentNodeId, activePoi }: { currentNodeId: string;
   const lastNodeId = useRef(currentNodeId)
   const lastPoiId = useRef<string | null>(null)
 
+  // Regarder autour de soi n'est possible qu'une fois "entré" (plus de vue par défaut
+  // rue) — au node de départ, le geste tactile reste un scroll de page normal.
+  const entered = currentNodeId !== 'street'
+  const enteredRef = useRef(entered)
+  useEffect(() => {
+    enteredRef.current = entered
+    gl.domElement.style.touchAction = entered ? 'none' : 'auto'
+  }, [entered, gl])
+
   // Regarder autour de soi — drag souris/tactile, ignoré pendant une transition
   useEffect(() => {
     const dom = gl.domElement
-    dom.style.touchAction = 'none'
     const drag = { active: false, lastX: 0, lastY: 0 }
 
     const onDown = (e: PointerEvent) => {
+      if (!enteredRef.current) return
       drag.active = true
       drag.lastX = e.clientX
       drag.lastY = e.clientY

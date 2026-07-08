@@ -1,11 +1,18 @@
+'use client'
+
+import { useRef } from 'react'
 import { siteData } from '@/app/data'
 import Image from 'next/image'
+import { useSnapSection } from '@/app/components/motion/useSnapSection'
 
 export default function HeroSection() {
   const { hero, brand } = siteData
+  const sectionRef = useRef<HTMLElement>(null)
+  useSnapSection(sectionRef)
 
   return (
     <section
+      ref={sectionRef}
       className="relative flex min-h-screen flex-col p-4"
       style={{ background: 'var(--color-paper)' }}
     >

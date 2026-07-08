@@ -1,10 +1,17 @@
+'use client'
+
+import { useRef } from 'react'
 import { siteData } from '@/app/data'
+import { useSnapSection } from '@/app/components/motion/useSnapSection'
 
 export default function SpaceIntroSection() {
   const { brand, espace, atelier } = siteData
+  const sectionRef = useRef<HTMLElement>(null)
+  useSnapSection(sectionRef)
 
   return (
     <section
+      ref={sectionRef}
       className="relative flex min-h-screen flex-col p-4"
       style={{ background: '#0e0e0e', color: 'var(--color-paper)' }}
     >

@@ -1,13 +1,19 @@
+'use client'
+
+import { useRef } from 'react'
 import { NewsletterFields } from '@/app/components/newsletter/NewsletterFields'
 import { siteData } from '@/app/data'
 import { config } from '@/app/config'
-
+import { useSnapSection } from '@/app/components/motion/useSnapSection'
 
 export default function FooterSection() {
   const { brand, footer, newsletter } = siteData
+  const sectionRef = useRef<HTMLElement>(null)
+  useSnapSection(sectionRef)
 
   return (
     <footer
+      ref={sectionRef}
       id="contact"
       className="relative min-h-screen overflow-hidden"
       style={{ background: config.page.background }}
