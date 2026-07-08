@@ -14,7 +14,7 @@ const BRANDS = [
     role: 'Marque résidente',
     accent: 'var(--color-bizness)',
     bgUrl: '/mb.webp',
-    logoUrl: '/biznesslogowhite.svg', // → remplacer par '/logos/mb_logo.svg'
+    logoUrl: '/biznesslogowhite.svg',
     description:
       "Marque de streetwear qui fabrique ses pièces directement dans l'atelier Mud Studio, en sérigraphie et DTF.",
   },
@@ -25,7 +25,7 @@ const BRANDS = [
     accent: 'var(--color-marginal)',
     bgPosition: 'top',
     bgUrl: '/margi.webp',
-    logoUrl: '/margi.svg', // → remplacer par '/logos/marginal_logo.svg'
+    logoUrl: '/margi.svg',
     description:
       "Collections streetwear en séries limitées, conçues et imprimées dans l'atelier depuis l'ouverture.",
   },
@@ -35,7 +35,7 @@ const BRANDS = [
     role: 'Marque partenaire',
     accent: 'var(--color-mud)',
     bgUrl: '/bourbier.png',
-    logoUrl: '/bourbier_logo.svg', // → remplacer par '/logos/bourbier_logo.svg'
+    logoUrl: '/bourbier_logo.svg',
     description:
       "Production en cours de structuration avec l'atelier Mud Studio — description complète à paraître.",
   },
@@ -50,15 +50,25 @@ function BrandsIntro() {
       style={{ color: 'var(--color-ink)' }}
     >
       {/* Top bar */}
-      <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--color-line)', paddingBottom: '1.5rem' }}>
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: 'var(--color-mud)' }}>
-          Mud Studio · Résidences
-        </p>
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: 'var(--color-ink-soft)' }}>
-          Montreuil · 93
-        </p>
-      </div>
+      <div
+        className="flex items-center justify-between"
+        style={{
+          borderBottom: '1px solid var(--color-line)',
+          paddingBottom: '1.5rem',
+        }}
+      >
+        <p
+          className="font-mono text-[11px] uppercase tracking-[0.22em]"
+          style={{ color: 'var(--color-mud)' }}
+        >
+          Mud Studio · Résidences </p>
+        <p
+          className="font-mono text-[11px] uppercase tracking-[0.22em]"
+          style={{ color: 'var(--color-ink-soft)' }}
+        >
+          Montreuil · 93 </p> </div>
 
+      ```
       {/* Headline + description */}
       <div className="flex flex-1 flex-col justify-end pb-10 pt-16">
         <h2
@@ -66,7 +76,9 @@ function BrandsIntro() {
           style={{ color: 'var(--color-ink)' }}
         >
           {['Des marques', 'qui produisent', 'sur place'].map((line, i) => (
-            <span key={i} className="block">{line}</span>
+            <span key={i} className="block">
+              {line}
+            </span>
           ))}
         </h2>
 
@@ -83,13 +95,30 @@ function BrandsIntro() {
             sérigraphie, DTF ou flex.
           </p>
 
-          {/* Scroll hint */}
           <div className="flex items-end justify-end sm:justify-start">
-            <div className="flex items-center gap-3" style={{ color: 'var(--color-ink-soft)' }}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="animate-bounce" aria-hidden>
-                <path d="M10 3v14M10 17l-4-4M10 17l4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            <div
+              className="flex items-center gap-3"
+              style={{ color: 'var(--color-ink-soft)' }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                className="animate-bounce"
+                aria-hidden
+              >
+                <path
+                  d="M10 3v14M10 17l-4-4M10 17l4-4"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
-              <span className="font-mono text-[11px] uppercase tracking-[0.22em]">Scroll</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
+                Scroll
+              </span>
             </div>
           </div>
         </div>
@@ -98,39 +127,54 @@ function BrandsIntro() {
       {/* Bottom meta bar */}
       <div
         className="flex justify-between font-mono text-[11px] uppercase tracking-widest"
-        style={{ color: 'var(--color-ink-soft)', borderTop: '1px solid var(--color-line)', paddingTop: '1.25rem' }}
+        style={{
+          color: 'var(--color-ink-soft)',
+          borderTop: '1px solid var(--color-line)',
+          paddingTop: '1.25rem',
+        }}
       >
         <span>02 résidentes · 01 partenaire</span>
         <span>Sérigraphie · DTF · Flex</span>
       </div>
     </div>
+
   )
 }
 
-function BrandCardBody({ brand, priority }: { brand: Brand; priority?: boolean }) {
+function BrandCardBody({
+  brand,
+  priority,
+}: {
+  brand: Brand
+  priority?: boolean
+}) {
   return (
     <>
       <Image
         src={brand.bgUrl}
         alt={brand.name.join(' ')}
         fill
-        style={{ objectPosition: brand.bgPosition }}
         priority={priority}
         quality={75}
         sizes="100vw"
         className="object-cover object-center"
+        style={{ objectPosition: brand.bgPosition }}
       />
 
       <div className="absolute inset-0 bg-black/45" />
 
-      {/* CENTER: brand logo (ou placeholder) */}
+      {/* CENTER: logo */}
       <div className="absolute inset-0 flex items-center justify-center">
         {brand.logoUrl ? (
           <div className="relative h-28 w-56 sm:h-36 sm:w-72">
-            <Image src={brand.logoUrl} alt={brand.name.join(' ')} fill className="object-contain" />
+            <Image
+              src={brand.logoUrl}
+              alt={brand.name.join(' ')}
+              fill
+              className="object-contain"
+            />
           </div>
         ) : (
-          /* Placeholder : nom stylisé en filigranne */
           <p
             className="select-none text-center font-black uppercase"
             style={{
@@ -141,17 +185,22 @@ function BrandCardBody({ brand, priority }: { brand: Brand; priority?: boolean }
               opacity: 0.18,
             }}
           >
-            {brand.name.map((l, j) => (
-              <span key={j} className="block">{l}</span>
+            {brand.name.map((line, j) => (
+              <span key={j} className="block">
+                {line}
+              </span>
             ))}
           </p>
         )}
       </div>
 
-      {/* BOTTOM: numéro + nom + description */}
-      <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-45">
+      {/* BOTTOM */}
+      <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-10">
         <div className="mb-4 flex items-center gap-2">
-          <span className="h-2 w-2 flex-none rounded-full" style={{ background: brand.accent }} />
+          <span
+            className="h-2 w-2 flex-none rounded-full"
+            style={{ background: brand.accent }}
+          />
           <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
             {brand.number} · {brand.role}
           </span>
@@ -166,6 +215,7 @@ function BrandCardBody({ brand, priority }: { brand: Brand; priority?: boolean }
         </p>
       </div>
     </>
+
   )
 }
 
@@ -175,26 +225,24 @@ export default function BrandsSection() {
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
-    // Mobile : la pile sticky pure CSS plus bas fait déjà l'effet, sans une
-    // ligne de JS. Le scrub GSAP ci-dessous ne tourne que sur desktop — c'est
-    // lui qui provoquait des accrocs de scroll par endroits sur tactile.
     const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches
     if (isTouch) return
+
 
     const outer = outerRef.current
     if (!outer) return
 
     const CARD_SCREENS = 1.9
     const INTRO = 1
-    const OUTRO = 1.2 // extra hold after last card settles — softens the transition to TeamSection
+    const OUTRO = 1.2
 
     const setHeight = () => {
       outer.style.height = `${window.innerHeight * (INTRO + BRANDS.length * CARD_SCREENS + OUTRO)}px`
     }
+
     setHeight()
 
     const ctx = gsap.context(() => {
-      // Reveal cards (visibility was hidden in JSX to prevent SSR flash)
       const cards = cardRefs.current.filter(Boolean) as HTMLElement[]
       gsap.set(cards, { visibility: 'visible' })
 
@@ -203,11 +251,11 @@ export default function BrandsSection() {
         const image = imageRefs.current[i]
         if (!card) return
 
-        const getStart = () => window.innerHeight * INTRO + i * window.innerHeight * CARD_SCREENS
+        const getStart = () =>
+          window.innerHeight * INTRO + i * window.innerHeight * CARD_SCREENS
         const getEnterEnd = () => getStart() + window.innerHeight * 0.9
         const getHoldEnd = () => getStart() + window.innerHeight * CARD_SCREENS
 
-        // force3D ensures translateZ(0) is used — GPU compositor layer
         gsap.fromTo(
           card,
           { yPercent: 100 },
@@ -249,6 +297,7 @@ export default function BrandsSection() {
         setHeight()
         ScrollTrigger.refresh()
       }
+
       window.addEventListener('resize', onResize)
       requestAnimationFrame(() => ScrollTrigger.refresh())
 
@@ -256,60 +305,77 @@ export default function BrandsSection() {
     }, outer)
 
     return () => ctx.revert()
+
+
   }, [])
 
-  return (
-    <section id="section-brands" className="relative">
-      {/* DESKTOP — timeline pinnée, scrub GSAP (cartes en superposition absolue) */}
-      <div ref={outerRef} className="relative hidden bg-[var(--color-paper)] md:block">
-        <div className="sticky top-0 h-screen overflow-hidden">
-          <BrandsIntro />
+  return (<section id="section-brands" className="relative">
+    {/* DESKTOP */} <div
+      ref={outerRef}
+      className="relative hidden bg-[var(--color-paper)] md:block"
+    > <div className="sticky top-0 h-screen overflow-hidden"> <BrandsIntro />
 
-          {BRANDS.map((brand, i) => (
-            <article
-              key={brand.number}
+
+        {BRANDS.map((brand, i) => (
+          <article
+            key={brand.number}
+            ref={(el) => {
+              cardRefs.current[i] = el
+            }}
+            className="absolute inset-0 overflow-hidden"
+            style={{
+              zIndex: i + 2,
+              visibility: 'hidden',
+              willChange: 'transform',
+            }}
+          >
+            <div
               ref={(el) => {
-                cardRefs.current[i] = el
+                imageRefs.current[i] = el
               }}
-              className="absolute inset-0 overflow-hidden"
-              style={{ zIndex: i + 2, visibility: 'hidden', willChange: 'transform' }}
+              className="absolute inset-0"
             >
-              <div
-                ref={(el) => {
-                  imageRefs.current[i] = el
-                }}
-                className="absolute inset-0"
-              >
-                <BrandCardBody brand={brand} priority={i === 0} />
-              </div>
-            </article>
-          ))}
-        </div>
+              <BrandCardBody brand={brand} priority={i === 0} />
+            </div>
+          </article>
+        ))}
       </div>
+    </div>
 
-      {/* MOBILE — pile de sections sticky natives, aucun JS : chaque carte
-          recouvre naturellement la précédente en scrollant (position:sticky).
-          Le "sticky h-screen" doit être dans un conteneur PLUS HAUT que lui
-          (200vh) : sans cette marge, la carte suivante recouvre la précédente
-          instantanément, sans aucun temps d'arrêt pour la lire. */}
-      <div className="md:hidden" style={{ background: 'var(--color-paper)' }}>
-        <div className="h-[200vh]">
-          <div className="sticky top-0 h-screen overflow-hidden">
+    {/* MOBILE — vrai stack sticky */}
+
+    <div className="bg-(--color-paper) md:hidden">
+      {/* Intro */}
+      <div className="relative min-h-svh">
+        <div className="sticky top-0 h-svh overflow-hidden">
+          <div className="relative h-full w-full">
             <BrandsIntro />
           </div>
         </div>
+      </div>
 
-        {BRANDS.map((brand, i) => (
-          <div key={brand.number} className="h-[200vh]">
-            <div className="sticky top-0 h-screen overflow-hidden">
-              {/* Image "fill" veut un parent absolute/relative — sticky seul ne suffit pas */}
-              <div className="absolute inset-0">
+      <div className="relative">
+        {BRANDS.map((brand, i) => {
+          return (
+            <article
+              key={brand.number}
+              className="sticky overflow-hidden"
+              style={{
+                top: 0,
+                zIndex: 20 + i,
+                height: 'calc(100svh - 32px)',
+              }}
+            >
+              <div className="relative h-full w-full">
                 <BrandCardBody brand={brand} priority={i === 0} />
               </div>
-            </div>
-          </div>
-        ))}
+            </article>
+          )
+        })}
       </div>
-    </section>
+    </div>
+  </section>
+
+
   )
 }
