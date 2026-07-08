@@ -6,7 +6,7 @@ export default function SpaceIntroSection() {
   return (
     <section
       id="section-space"
-      className="snap-page relative flex min-h-screen flex-col p-4"
+      className="relative flex min-h-screen flex-col p-4"
       style={{ background: '#0e0e0e', color: 'var(--color-paper)' }}
     >
       {/* ── Top bar ─────────────────────────────────── */}

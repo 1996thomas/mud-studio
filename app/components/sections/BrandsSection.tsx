@@ -89,13 +89,6 @@ export default function BrandsSection() {
               end: () => `top+=${getEnterEnd()}px top`,
               scrub: 1,
               invalidateOnRefresh: true,
-              // Si le scroll s'arrête à mi-transition, on termine de révéler
-              // (ou on annule) la carte plutôt que de la laisser à moitié sortie.
-              snap: {
-                snapTo: 1,
-                duration: { min: 0.2, max: 0.5 },
-                ease: 'power1.inOut',
-              },
             },
           }
         )

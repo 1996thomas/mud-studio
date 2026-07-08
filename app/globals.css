@@ -43,11 +43,6 @@ body {
   font-family: var(--font-ibm-plex-sans), Helvetica, Arial, sans-serif;
 }
 
-/* Le snap de scroll (sections .snap-page) est géré en JS par SnapController,
-   pas en CSS scroll-snap-type — voir ce composant pour le pourquoi (en résumé :
-   "mandatory" saute par-dessus BrandsSection/TeamSection, "proximity" se bat
-   avec les petits scrolls près d'un bord). */
-
 /* ─── Mobile viewport height fix ───────────────────────────────────────────
    100vh includes the browser chrome (address bar) on iOS Safari and Chrome
    Android — elements sized with h-screen/min-h-screen are taller than the

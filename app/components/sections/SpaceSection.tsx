@@ -32,7 +32,7 @@ export default function SpaceSection() {
   }
 
   return (
-    <section className="snap-page relative h-screen w-full" style={{ background: '#171310' }}>
+    <section className="relative h-screen w-full" style={{ background: '#171310' }}>
       <div className="absolute inset-0">
         <TourScene
           currentNodeId={currentNodeId}

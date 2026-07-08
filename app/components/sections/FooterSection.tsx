@@ -8,7 +8,7 @@ export default function FooterSection() {
   return (
     <footer
       id="contact"
-      className="snap-page relative h-screen overflow-hidden"
+      className="relative h-screen overflow-hidden"
       style={{ background: config.page.background }}
     >
 
