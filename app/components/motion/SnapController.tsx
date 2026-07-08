@@ -26,6 +26,13 @@ export function SnapController() {
   useEffect(() => {
     let idleTimer: ReturnType<typeof setTimeout> | null = null
     let snapping = false
+    // Tant qu'un doigt est posé sur l'écran, le navigateur mappe directement sa
+    // position au scroll — si l'utilisateur marque une pause pour changer de
+    // sens (sans relâcher), le débounce ci-dessous croit le scroll "arrêté" et
+    // déclenche un scrollTo() qui se bat avec le doigt toujours actif : ça
+    // saute dans tous les sens. On suspend donc toute correction tant que le
+    // doigt est posé, et on ne l'évalue qu'après relâchement.
+    let touching = false
 
     const getSnapTops = () =>
       Array.from(document.querySelectorAll<HTMLElement>('.snap-page')).map(
@@ -33,7 +40,7 @@ export function SnapController() {
       )
 
     const settle = () => {
-      if (snapping) return
+      if (snapping || touching) return
       const y = window.scrollY
       const threshold = window.innerHeight * 0.5
 
@@ -56,7 +63,7 @@ export function SnapController() {
     }
 
     const onScroll = () => {
-      if (snapping) return
+      if (snapping || touching) return
       if (idleTimer) clearTimeout(idleTimer)
       // Un vrai geste de scroll (molette continue, flick trackpad) déclenche une
       // rafale d'événements 'scroll' très rapprochés (souvent <100ms d'écart) —
@@ -67,9 +74,27 @@ export function SnapController() {
       idleTimer = setTimeout(settle, 350)
     }
 
+    const onTouchStart = () => {
+      touching = true
+      if (idleTimer) clearTimeout(idleTimer)
+    }
+    const onTouchEnd = () => {
+      touching = false
+      // Le doigt est levé, mais l'inertie peut continuer à scroller un peu —
+      // le débounce habituel prend le relais pour resnap une fois ça stabilisé.
+      if (idleTimer) clearTimeout(idleTimer)
+      idleTimer = setTimeout(settle, 350)
+    }
+
     window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('touchend', onTouchEnd, { passive: true })
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true })
     return () => {
       window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('touchend', onTouchEnd)
+      window.removeEventListener('touchcancel', onTouchEnd)
       if (idleTimer) clearTimeout(idleTimer)
     }
   }, [])
